@@ -81,8 +81,7 @@ def run():
 
     for well_name in well_names:
         well = api.GetWell(well_name)
-        if well_name == "HERCILIO":
-        # if 'Oil Production Rate' in well.GetCurveNames():
+        if 'Oil Production Rate' in well.GetCurveNames():
             producers.append(well)
 
     for prod_well in producers:
@@ -103,7 +102,7 @@ def run():
         np.putmask(wct, np.isnan(wct), 0)
 
         prod_well.AddCurve(WOR_CURVE_NAME, opr_curve.GetTimeSet(), wor, "<unknown>")
-        prod_well.AddCurve(WCT_CURVE_NAME, opr_curve.GetTimeSet(), wct, "<unknown>")
+        prod_well.AddCurve(WCT_CURVE_NAME, opr_curve.GetTimeSet(), wct, "m3/m3")
 
         # create exponential regression and export the coefficients
         time_array_years = forecast.ConvertDatesInDeltaYears(opr_curve.GetX())
