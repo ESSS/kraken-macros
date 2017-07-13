@@ -16,11 +16,12 @@ import bisect
 
 class Forecaster:
     
+    
     def __init__(self, study):
         assert isinstance(study,KAModel), 'Not a Study'
         self.study = study
-        
-
+    
+    
     def CreateForecastDatesArray(self, final_forecasting_date, initial_date):
     
         # Obtain the Field of the current study
@@ -40,8 +41,9 @@ class Forecaster:
         
         return forecasting_timeset
 
+
+
     def ExponentialForecast(self, Di, time_array, well_name, initial_cumulative_oil = None, initial_oil_rate = None):
-        
         cumulative_oil_array = np.zeros(len(time_array))
         curve_name = 'Oil Production Rate'
         # Get Well
@@ -72,9 +74,9 @@ class Forecaster:
         well.AddCurve(exponential_curve_names[1], time_array , cumulative_oil_array, 'm3')
         
         return tuple(exponential_curve_names)
-      
+    
+    
     def HyperbolicForecast(self, b, Di, time_array, well_name, initial_cumulative_oil = None, initial_oil_rate = None):
-        
         cumulative_oil_array = np.zeros(len(time_array))
         opr = 'Oil Production Rate'
         # Get Well
@@ -106,8 +108,8 @@ class Forecaster:
         
         return tuple(hyperbolic_curve_names)
     
+    
     def WORForecast(self, m, c, time_array, well_name, initial_liquid_rate = None, initial_cumulative_oil = None):
-        
         #arrays initialization
         cumulative_oil_array = np.zeros(len(time_array))    #total produced oil in [Mstb]
         wor = np.zeros(len(time_array))                     #water oil rate 
@@ -154,8 +156,8 @@ class Forecaster:
         
         return tuple(wor_curve_names[0:2])
     
+    
     def WCForecast(self, m, c, time_array, well_name, initial_liquid_rate = None, initial_cumulative_oil = None):
-        
         #arrays initialization
         cumulative_oil_array_wc = np.zeros(len(time_array))    #total produced oil in [Mstb]
         wc = np.zeros(len(time_array))                     #water oil rate 
@@ -202,19 +204,15 @@ class Forecaster:
         
         return tuple(wc_curve_names[0:2])
     
-    def ConvertDatesInDeltaYears(self, time_array):
     
-        time_array_years = np.zeros(len(time_array))
-                  
+    def ConvertDatesInDeltaYears(self, time_array):
+        time_array_years = np.zeros(len(time_array))           
         for i in xrange(len(time_array)):
-            
             time_array_years[i] = (np.datetime64(time_array[i].date) - np.datetime64(time_array[0].date)) / np.timedelta64(1,'D') / 365.25
-            
         return time_array_years
     
+    
     def InterpolateValuesForInitialDate(self, well_name, initial_forecasting_date):
-               
-            
         initial_forecasting_date = TimeStep.CreateFromString(initial_forecasting_date, '%Y-%m-%d')
         opr = self.study.GetWell(well_name).GetCurve('Oil Production Rate')    
         interpolated_oil_rate = opr.Interpolate(initial_forecasting_date)
@@ -226,15 +224,15 @@ class Forecaster:
         
         return interpolated_oil_rate, interpolated_oil_total, interpolated_liquid_rate
     
-    def BisectArrays(self, well_name, history_name, future_time_array, initial_forecasting_date, signal):
+    
+    def BisectArrays(self, well_name, initial_forecasting_date, signal):
         
         well = self.study.GetWell(well_name)
             
-        original_time_set = well.GetCurve('Oil Production Rate',history_name).GetTimeSet()        
-        original_values_array_opr = well.GetCurve('Oil Production Rate',history_name).GetY()
-        original_values_array_opt = well.GetCurve('Oil Production Total',history_name).GetY()
-        original_values_array_wpr = well.GetCurve('Water Production Rate',history_name).GetY()
-#         original_values_array_wir = well.GetCurve('Water Injection Rate',history_name).GetY()
+        original_time_set = well.GetCurve('Oil Production Rate').GetTimeSet()        
+        original_values_array_opr = well.GetCurve('Oil Production Rate').GetY()
+        original_values_array_opt = well.GetCurve('Oil Production Total').GetY()
+        original_values_array_wpr = well.GetCurve('Water Production Rate').GetY()
         original_values_array_opt += 0.0001
         
         initial_forecasting_date = TimeStep.CreateFromString(initial_forecasting_date, '%Y-%m-%d')
@@ -253,6 +251,7 @@ class Forecaster:
             well.AddCurve(u'Water Production Rate (History)',original_time_set, original_values_array_wpr, 'm3/d')
         
         return tuple(splitted_curve_names)
+
 
 class GroupForecaster:
     
@@ -323,6 +322,3 @@ class GroupForecaster:
             group.AddCurve(u'Oil Production Rate (WC Forecast)', time_array , opr_wc_group_forecast, 'm3/d')
             group.AddCurve(u'Oil Production Total (WC Forecast)', time_array , opt_wc_group_forecast, 'm3')
 #             group.AddCurve(u'Water Cut (WC Forecast)', time_array , wc_group_forecast, 'm3/m3')
-            
-        
-    
