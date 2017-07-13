@@ -1,0 +1,33 @@
+import os
+import shutil
+import sys
+
+
+def copy_macro_files(macro_filename):
+    assert os.path.split(macro_filename)[1].startswith("macro_"), "Selected file is not a Kraken Macro"
+    src = os.path.dirname(macro_filename)
+    dst = get_macros_dirname()
+    for name in os.listdir(src):
+        fullname = os.path.join(src, name)
+        if os.path.isfile(fullname):
+            shutil.copy2(fullname, dst)
+        else:
+            dst_dirname = os.path.join(dst, name)
+            if os.path.isdir(dst_dirname):
+                shutil.rmtree(dst_dirname)
+            shutil.copytree(fullname, dst_dirname, ignore=shutil.ignore_patterns("*.pyc"))    
+    
+    
+def get_macros_dirname():
+    return os.path.expanduser("~/Documents/Kraken/Scripts/")
+
+
+def main(args):
+    macro_filename = os.path.abspath(args[1])
+    copy_macro_files(macro_filename)
+    _, macro_basename = os.path.split(macro_filename)
+    print("{} and dependencies copied to Scripts folder".format(macro_basename))
+
+
+if __name__ == '__main__':
+    main(sys.argv)
