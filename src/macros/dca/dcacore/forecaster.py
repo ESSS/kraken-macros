@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 from coilib50.time.time_step import TimeStep
 from coilib50.time.time_set import TimeSet
 from kraken20.plugins.api.ka_model import KAModel
-from shared.smart_regression import Regression
+from dcacore import regression
 import numpy as np
 import bisect
 
@@ -260,8 +260,6 @@ class GroupForecaster:
         self.study = study
     
     def GroupCalculations(self, groups_dict, time_array, opr_history, opt_history, wpr_history):
-        
-#         regression = Regression(self.study)
         
         for group_name in groups_dict.keys():
               
