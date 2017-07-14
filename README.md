@@ -1,2 +1,5 @@
 # kraken-macros
-A repository for Kraken scripts and macros developed by the Kraken sales and support team
+Available Macros:
+
+ - [Declice Curve Analysis](src/macros/dca): macro for production predictions using decline curves 
+ - [Material Balance](src/macros/mbal): macro for analyitical calculation of material balance
