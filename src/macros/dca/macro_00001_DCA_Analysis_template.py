@@ -88,7 +88,7 @@ def run():
         np.putmask(wor, np.isnan(wor), 0)
         np.putmask(wct, np.isnan(wct), 0)
 
-        prod_well.AddCurve(WOR_CURVE_NAME, opr_curve.GetTimeSet(), wor, "<unknown>")
+        prod_well.AddCurve(WOR_CURVE_NAME, opr_curve.GetTimeSet(), wor, "m3/m3")
         prod_well.AddCurve(WCT_CURVE_NAME, opr_curve.GetTimeSet(), wct, "m3/m3")
 
         # create exponential regression and export the coefficients
