@@ -21,6 +21,8 @@ config_filename = os.path.join(path_mapper['/scripts_output'], "last_dca.txt")
 
 WOR_CURVE_NAME = 'Water-Oil Ratio'
 WCT_CURVE_NAME = 'Water Cut'
+FORECAST_DEFAULT_YEARS = 10
+
 
 
 def run():
@@ -35,7 +37,11 @@ def run():
     base_well = api.GetWell(api.GetWellNames()[0])
     base_time_set = base_well.GetCurve(base_well.GetCurveNames()[0]).GetTimeSet()
     guess_initial_date = base_time_set[-1].GetDateTime().date()
-    guess_final_date = date(guess_initial_date.year + 5, guess_initial_date.month, guess_initial_date.day)
+    guess_final_date = date(
+        guess_initial_date.year + FORECAST_DEFAULT_YEARS,
+        guess_initial_date.month,
+        guess_initial_date.day
+        )
     # This section opens dialogs and get initial and final forecasting dates from the user, study name and history file
     # to be used in the forecasting
 
@@ -271,7 +277,7 @@ def run():
 
     oil_production_total__splitted = script.GetPropertyTemplate(
         u'_unknown_Oil Production Total (History)__realization_user')
-    wor__realization_custom = script.GetPropertyTemplate(u'_unknown_WOR__realization_custom')
+    wor__realization_custom = script.GetPropertyTemplate(u'_unknown_Water-Oil Ratio__realization_user')
     cross_1 = script.GetPropertyTemplateCrossedWithSource(oil_production_total__splitted, wor__realization_custom,
                                                           u'Curve')
 
@@ -317,7 +323,7 @@ def run():
     app.GetWindow().SetName('Water Cut Forecast')
     data_id_2 = macro_context.GetDataId(u'WellSelectorProcessSubject', name=well_name, study_id=study_id_0)
 
-    water_cut_sc = script.GetPropertyTemplate('WATER_CUT_SC')
+    water_cut_sc = script.GetPropertyTemplate('WATER_CUT_SC__realization_user')
     cross_3 = script.GetPropertyTemplateCrossedWithSource(oil_production_total__splitted, water_cut_sc, u'Curve')
 
     oil_production_total_wc = script.GetPropertyTemplate(
