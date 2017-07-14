@@ -22,23 +22,16 @@ class Forecaster:
         self.study = study
     
     
-    def CreateForecastDatesArray(self, final_forecasting_date, initial_date):
-    
+    def CreateForecastDatesArray(self, final_date, initial_date):
         # Obtain the Field of the current study
         field = self.study.GetField()
-        
         # Obtain the curve array (values and dates)
         curve = field.GetCurve('Oil Production Rate')
         # Obtain the time array
-        current_timeset = curve.GetTimeSet()
-        
-        initial_forecasting_date = np.datetime64(initial_date)
-        initial_date = TimeStep.CreateFromString(initial_date, '%Y-%m-%d')           
-        final_date = np.datetime64(final_forecasting_date)
-        elapsed_days = int((final_date - initial_forecasting_date) / np.timedelta64(1,'D')) + 1
-               
-        forecasting_timeset = current_timeset.CreateFromAbsoluteDeltasInDays(initial_date, xrange(elapsed_days))
-        
+        timeset = curve.GetTimeSet()
+        initial_step = TimeStep.Create(final_date.year, final_date.month, final_date.day)
+        forecasting_delta = final_date - initial_date           
+        forecasting_timeset = timeset.CreateFromAbsoluteDeltasInDays(initial_step, xrange(forecasting_delta.days))
         return forecasting_timeset
 
 
@@ -212,8 +205,8 @@ class Forecaster:
         return time_array_years
     
     
-    def InterpolateValuesForInitialDate(self, well_name, initial_forecasting_date):
-        initial_forecasting_date = TimeStep.CreateFromString(initial_forecasting_date, '%Y-%m-%d')
+    def InterpolateValuesForInitialDate(self, well_name, initial_date):
+        initial_forecasting_date = TimeStep.Create(initial_date.year, initial_date.month, initial_date.day)
         opr = self.study.GetWell(well_name).GetCurve('Oil Production Rate')    
         interpolated_oil_rate = opr.Interpolate(initial_forecasting_date)
         opt = self.study.GetWell(well_name).GetCurve('Oil Production Total')
@@ -225,22 +218,17 @@ class Forecaster:
         return interpolated_oil_rate, interpolated_oil_total, interpolated_liquid_rate
     
     
-    def BisectArrays(self, well_name, initial_forecasting_date, signal):
-        
+    def BisectArrays(self, well_name, initial_date, signal):
         well = self.study.GetWell(well_name)
-            
         original_time_set = well.GetCurve('Oil Production Rate').GetTimeSet()        
         original_values_array_opr = well.GetCurve('Oil Production Rate').GetY()
         original_values_array_opt = well.GetCurve('Oil Production Total').GetY()
         original_values_array_wpr = well.GetCurve('Water Production Rate').GetY()
         original_values_array_opt += 0.0001
-        
-        initial_forecasting_date = TimeStep.CreateFromString(initial_forecasting_date, '%Y-%m-%d')
-        
+        initial_date = TimeStep.Create(initial_date.year, initial_date.month, initial_date.day)
         splitted_curve_names = [u'Oil Production Rate (History)', u'Oil Production Total (History)']
-
         if signal:
-            position = bisect.bisect_left(original_time_set, initial_forecasting_date)
+            position = bisect.bisect_left(original_time_set, initial_date)
             splitted_time_set = TimeSet.CreateFromTimeSteps(original_time_set[0], original_time_set[0:position])
             well.AddCurve(splitted_curve_names[0], splitted_time_set, original_values_array_opr[0:position], 'm3/d')
             well.AddCurve(splitted_curve_names[1], splitted_time_set, original_values_array_opt[0:position], 'm3')
@@ -249,7 +237,6 @@ class Forecaster:
             well.AddCurve(splitted_curve_names[0], original_time_set, original_values_array_opr, 'm3/d')
             well.AddCurve(splitted_curve_names[1], original_time_set, original_values_array_opt, 'm3')
             well.AddCurve(u'Water Production Rate (History)',original_time_set, original_values_array_wpr, 'm3/d')
-        
         return tuple(splitted_curve_names)
 
 
