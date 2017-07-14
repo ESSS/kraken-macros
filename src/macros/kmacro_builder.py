@@ -4,7 +4,6 @@ import sys
 
 
 def copy_macro_files(macro_filename):
-    assert os.path.split(macro_filename)[1].startswith("macro_"), "Selected file is not a Kraken Macro"
     src = os.path.dirname(macro_filename)
     dst = get_macros_dirname()
     for name in os.listdir(src):
@@ -24,6 +23,9 @@ def get_macros_dirname():
 
 def main(args):
     macro_filename = os.path.abspath(args[1])
+    if not os.path.split(macro_filename)[1].startswith("macro_"):
+        sys.stderr.write("Error: selected file is not a Kraken Macro")
+        exit(1)
     copy_macro_files(macro_filename)
     _, macro_basename = os.path.split(macro_filename)
     print("{} and dependencies copied to Scripts folder".format(macro_basename))

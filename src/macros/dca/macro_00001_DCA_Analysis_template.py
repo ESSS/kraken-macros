@@ -14,53 +14,49 @@ import numpy as np
 from dcacore.forecaster import Forecaster, GroupForecaster, regression
 from ben10.foundation import log
 from coilib50.path.path_mapper import PathMapper
+from datetime import date
 
 path_mapper = PathMapper.GetSingleton()
 config_filename = os.path.join(path_mapper['/scripts_output'], "last_dca.txt")
 
 WOR_CURVE_NAME = 'Water-Oil Ratio'
 WCT_CURVE_NAME = 'Water Cut'
+FORECAST_DEFAULT_YEARS = 10
+
 
 
 def run():
-    study_names = api.GetStudyNames()
-    study_aux = api.GetStudy(study_names[0])
-    hist_names = study_aux.GetAvailableHistoryNames()
-    study_names_list = [0] + study_names
-    hist_names_list = [0] + hist_names
-
-    # This section opens dialogs and get initial and final forecasting dates from the user, study name and history file
-    # to be used in the forecasting
-    datalist = [
-        ('Initial date (Leave empty to use last simulation Time-Step)', '2015-09-01'),
-        ('Final Date', '2028-01-01'),
-        ('Study', study_names_list),
-    ]
-    input_answer = api.AskInput(datalist, 'DCA Analysis', 'Please input initial and final dates')
-    if input_answer:
-        init_time, final_time, study_idx = input_answer
-    else:
-        return
-
-    study = api.GetStudy(study_names[study_idx])
-    # history_name = hist_names[parameters[3]]
-    forecast = Forecaster(study)
-    group_forecast = GroupForecaster(study)
+    study = api.GetStudy()
 
     # Get the last time step in case the user didn't provide the initial Forecasting date
     field = study.GetField()
-    last_time_step = field.GetCurve('Oil Production Rate').GetTimeSet()[-1]
+    last_time_step = field.GetCurve("Oil Production Rate").GetTimeSet()[-1]
     last_time_step_str = last_time_step.date
 
-    # if the user defined an initial interpolation date, then a new time set will be created for it
-    if init_time:
-        time_array = forecast.CreateForecastDatesArray(final_time, init_time)
+    # Get any well to do some guesses about simulation time
+    base_well = api.GetWell(api.GetWellNames()[0])
+    base_time_set = base_well.GetCurve(base_well.GetCurveNames()[0]).GetTimeSet()
+    guess_initial_date = base_time_set[-1].GetDateTime().date()
+    guess_final_date = date(
+        guess_initial_date.year + FORECAST_DEFAULT_YEARS,
+        guess_initial_date.month,
+        guess_initial_date.day
+        )
+    # This section opens dialogs and get initial and final forecasting dates from the user, study name and history file
+    # to be used in the forecasting
 
-    # if an initial date was not defined by the user all the calculations will be done using the last
-    # simulation time-step
-    else:
-        init_time = unicode(last_time_step_str)
-        time_array = forecast.CreateForecastDatesArray(final_time, init_time)
+    datalist = [
+        ("Prediction Initial Date", guess_initial_date),
+        ("Prediction Final Date", guess_final_date)
+    ]
+    input_answer = api.AskInput(datalist, "DCA Analysis", "DCA Analysis for '{}'".format(study.GetName()))
+    if not input_answer:
+        return
+    init_date, final_date = input_answer
+    forecast = Forecaster(study)
+    group_forecast = GroupForecaster(study)
+
+    time_array = forecast.CreateForecastDatesArray(final_date, init_date)
 
     # This loop automatically calculates the slopes and trends from the history to set the forecast coefficients
     exp_coeff_dict = {}
@@ -86,10 +82,7 @@ def run():
 
     for prod_well in producers:
         log.Info("Calculation WOR/WCT for '{}'".format(prod_well.GetName()))
-        if init_time:
-            splitted_curve_names = forecast.BisectArrays(prod_well.GetName(), init_time, 1)
-        else:
-            splitted_curve_names = forecast.BisectArrays(prod_well.GetName(), unicode(last_time_step_str), 0)
+        splitted_curve_names = forecast.BisectArrays(prod_well.GetName(), init_date, 1)
 
         opr_curve = prod_well.GetCurve('Oil Production Rate')
         opt_curve = prod_well.GetCurve('Oil Production Total')
@@ -101,7 +94,7 @@ def run():
         np.putmask(wor, np.isnan(wor), 0)
         np.putmask(wct, np.isnan(wct), 0)
 
-        prod_well.AddCurve(WOR_CURVE_NAME, opr_curve.GetTimeSet(), wor, "<unknown>")
+        prod_well.AddCurve(WOR_CURVE_NAME, opr_curve.GetTimeSet(), wor, "m3/m3")
         prod_well.AddCurve(WCT_CURVE_NAME, opr_curve.GetTimeSet(), wct, "m3/m3")
 
         # create exponential regression and export the coefficients
@@ -140,7 +133,7 @@ def run():
         log.Info("Forecasting for '{}'".format(prod_well.GetName()))
 
         initial_oil_rate, initial_oil_total, initial_liquid_rate = \
-            forecast.InterpolateValuesForInitialDate(prod_well.GetName(), init_time)
+            forecast.InterpolateValuesForInitialDate(prod_well.GetName(), init_date)
         exponential_curve_names = forecast.ExponentialForecast(exp_coeff_dict[well_name],
                                                                time_array,
                                                                well_name,
@@ -270,7 +263,7 @@ def run():
                                                 u'symbol_style': -1, u'symbol_size': 10, u'curve_style': 1,
                                                 u'pen_width': 3, u'pen_style': 3})
 
-        if init_time:
+        if init_date:
             script.ChangeApplicationSettings(setting_name=unicode(
                 'CURVE_PROPS_input_reader_00001.' + well_name + '.realization#^user#^unknown_data#^Oil Production Total (History):^:realization#^user#^unknown_data#^Oil Production Rate (History):^:Curve'),
                                              value={u'pen_color': (0, 0, 0), u'symbol_color': (138, 43, 226),
@@ -284,7 +277,7 @@ def run():
 
     oil_production_total__splitted = script.GetPropertyTemplate(
         u'_unknown_Oil Production Total (History)__realization_user')
-    wor__realization_custom = script.GetPropertyTemplate(u'_unknown_WOR__realization_custom')
+    wor__realization_custom = script.GetPropertyTemplate(u'_unknown_Water-Oil Ratio__realization_user')
     cross_1 = script.GetPropertyTemplateCrossedWithSource(oil_production_total__splitted, wor__realization_custom,
                                                           u'Curve')
 
@@ -330,7 +323,7 @@ def run():
     app.GetWindow().SetName('Water Cut Forecast')
     data_id_2 = macro_context.GetDataId(u'WellSelectorProcessSubject', name=well_name, study_id=study_id_0)
 
-    water_cut_sc = script.GetPropertyTemplate('WATER_CUT_SC')
+    water_cut_sc = script.GetPropertyTemplate('WATER_CUT_SC__realization_user')
     cross_3 = script.GetPropertyTemplateCrossedWithSource(oil_production_total__splitted, water_cut_sc, u'Curve')
 
     oil_production_total_wc = script.GetPropertyTemplate(
