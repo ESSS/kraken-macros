@@ -31,7 +31,7 @@ class Forecaster:
         curve = well.GetCurve('Oil Production Rate')
         # Obtain the time array
         timeset = curve.GetTimeSet()
-        initial_step = TimeStep.Create(final_date.year, final_date.month, final_date.day)
+        initial_step = TimeStep.Create(initial_date.year, initial_date.month, initial_date.day)
         forecasting_delta = final_date - initial_date           
         forecasting_timeset = timeset.CreateFromAbsoluteDeltasInDays(initial_step, xrange(forecasting_delta.days))
         return forecasting_timeset

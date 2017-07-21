@@ -84,7 +84,8 @@ def update_forecast(new_value):
 
     time_array = well.GetCurve('Oil Production Rate (Exponential Forecast) (User)').GetX()
     initial_oil_rate, initial_oil_total, initial_liquid_rate = \
-        forecast.InterpolateValuesForInitialDate(selected_well_name, unicode(time_array[0].date))
+        forecast.InterpolateValuesForInitialDate(selected_well_name, time_array[0])
+    # forecast.InterpolateValuesForInitialDate(selected_well_name, unicode(time_array[0].date))
 
     forecast.ExponentialForecast(new_value[0], time_array, selected_well_name, initial_oil_total, initial_oil_rate)
     forecast.HyperbolicForecast(1.0, new_value[0], time_array, selected_well_name, initial_oil_total, initial_oil_rate)

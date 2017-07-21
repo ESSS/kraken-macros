@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/macros/dca" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/macros/mbal" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 2.7.13 (/opt/anaconda2/bin/python)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">
