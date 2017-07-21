@@ -4,7 +4,7 @@ Name for generated for macro: (DCA) DCA Analysis Template
 Commands Description for Macro:
 Creates Forecast Template
 Generate plots with the results
-
+ 
 @author: Vinicius Girardi
 '''
 from __future__ import unicode_literals
@@ -24,18 +24,25 @@ WCT_CURVE_NAME = 'Water Cut'
 FORECAST_DEFAULT_YEARS = 10
 
 
-
 def run():
     study = api.GetStudy()
 
     # Get the last time step in case the user didn't provide the initial Forecasting date
     field = study.GetField()
-    last_time_step = field.GetCurve("Oil Production Rate").GetTimeSet()[-1]
-    last_time_step_str = last_time_step.date
+    well_names = field.GetWellNames()
+    producers = []
 
+    for well_name in well_names:
+        well = field.GetWell(well_name)
+        if 'Oil Production Rate' in well.GetCurveNames():
+            producers.append(well)
+    
+    last_time_step = producers[0].GetCurve("Oil Production Rate").GetTimeSet()[-1]
+    last_time_step_str = last_time_step.date
+    
     # Get any well to do some guesses about simulation time
-    base_well = api.GetWell(api.GetWellNames()[0])
-    base_time_set = base_well.GetCurve(base_well.GetCurveNames()[0]).GetTimeSet()
+    base_well = field.GetWell(producers[0].name)
+    base_time_set = base_well.GetCurve('OPR').GetTimeSet()
     guess_initial_date = base_time_set[-1].GetDateTime().date()
     guess_final_date = date(
         guess_initial_date.year + FORECAST_DEFAULT_YEARS,
@@ -56,7 +63,7 @@ def run():
     forecast = Forecaster(study)
     group_forecast = GroupForecaster(study)
 
-    time_array = forecast.CreateForecastDatesArray(final_date, init_date)
+    time_array = forecast.CreateForecastDatesArray(final_date, init_date, base_well)
 
     # This loop automatically calculates the slopes and trends from the history to set the forecast coefficients
     exp_coeff_dict = {}
@@ -72,13 +79,13 @@ def run():
     app.GetWindow().SetName(u'auxiliar')
     cross_plot = app.GetWindow(u'auxiliar')
 
-    well_names = field.GetWellNames()
-    producers = []
-
-    for well_name in well_names:
-        well = api.GetWell(well_name)
-        if 'Oil Production Rate' in well.GetCurveNames():
-            producers.append(well)
+#     well_names = field.GetWellNames()
+#     producers = []
+# 
+#     for well_name in well_names:
+#         well = api.GetWell(well_name)
+#         if 'Oil Production Rate' in well.GetCurveNames():
+#             producers.append(well)
 
     for prod_well in producers:
         log.Info("Calculation WOR/WCT for '{}'".format(prod_well.GetName()))

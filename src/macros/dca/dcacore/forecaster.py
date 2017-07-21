@@ -23,11 +23,12 @@ class Forecaster:
         self.study = study
     
     
-    def CreateForecastDatesArray(self, final_date, initial_date):
+    def CreateForecastDatesArray(self, final_date, initial_date, base_well):
         # Obtain the Field of the current study
         field = self.study.GetField()
         # Obtain the curve array (values and dates)
-        curve = field.GetCurve('Oil Production Rate')
+        well = field.GetWell(base_well.name)
+        curve = well.GetCurve('Oil Production Rate')
         # Obtain the time array
         timeset = curve.GetTimeSet()
         initial_step = TimeStep.Create(final_date.year, final_date.month, final_date.day)
