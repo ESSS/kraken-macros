@@ -5,7 +5,7 @@ Commands Description for Macro:
 Creates Forecast Template
 Generate plots with the results
  
-@author: Vinicius Girardi
+@author: Vinicius Girardi 
 '''
 from __future__ import unicode_literals
 import os
