@@ -79,13 +79,6 @@ def run():
     app.GetWindow().SetName(u'auxiliar')
     cross_plot = app.GetWindow(u'auxiliar')
 
-#     well_names = field.GetWellNames()
-#     producers = []
-# 
-#     for well_name in well_names:
-#         well = api.GetWell(well_name)
-#         if 'Oil Production Rate' in well.GetCurveNames():
-#             producers.append(well)
 
     for prod_well in producers:
         log.Info("Calculation WOR/WCT for '{}'".format(prod_well.GetName()))
