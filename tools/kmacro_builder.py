@@ -18,7 +18,10 @@ def copy_macro_files(macro_filename):
     
     
 def get_macros_dirname():
-    return os.path.expanduser("~/Documents/Kraken/Scripts/")
+    if sys.platform == 'win32':
+        return os.path.expanduser("~/Documents/Kraken/Scripts/")
+    else:
+        return os.path.expanduser("~/.kraken20/scripts/")
 
 
 def main(args):

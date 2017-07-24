@@ -4,8 +4,8 @@ Name for generated for macro: (DCA) DCA Analysis Template
 Commands Description for Macro:
 Creates Forecast Template
 Generate plots with the results
-
-@author: Vinicius Girardi
+ 
+@author: Vinicius Girardi 
 '''
 from __future__ import unicode_literals
 import os
@@ -24,18 +24,24 @@ WCT_CURVE_NAME = 'Water Cut'
 FORECAST_DEFAULT_YEARS = 10
 
 
-
 def run():
-    study = api.GetStudy()
 
-    # Get the last time step in case the user didn't provide the initial Forecasting date
+    study = api.GetStudy()
     field = study.GetField()
-    last_time_step = field.GetCurve("Oil Production Rate").GetTimeSet()[-1]
-    last_time_step_str = last_time_step.date
+    well_names = field.GetWellNames()
+    open_producers = []
+
+    #Select the producers that are open in the last history time step
+    for well_name in well_names:
+        well = field.GetWell(well_name)
+        if 'Oil Production Rate' in well.GetCurveNames():
+            last_opr_value = well.GetCurve('Oil Production Rate').GetY()[-1]
+            if last_opr_value > 0.001:
+                open_producers.append(well)
 
     # Get any well to do some guesses about simulation time
-    base_well = api.GetWell(api.GetWellNames()[0])
-    base_time_set = base_well.GetCurve(base_well.GetCurveNames()[0]).GetTimeSet()
+    base_well = field.GetWell(open_producers[0].name)
+    base_time_set = base_well.GetCurve('OPR').GetTimeSet()
     guess_initial_date = base_time_set[-1].GetDateTime().date()
     guess_final_date = date(
         guess_initial_date.year + FORECAST_DEFAULT_YEARS,
@@ -50,13 +56,15 @@ def run():
         ("Prediction Final Date", guess_final_date)
     ]
     input_answer = api.AskInput(datalist, "DCA Analysis", "DCA Analysis for '{}'".format(study.GetName()))
+
     if not input_answer:
         return
+
     init_date, final_date = input_answer
     forecast = Forecaster(study)
     group_forecast = GroupForecaster(study)
 
-    time_array = forecast.CreateForecastDatesArray(final_date, init_date)
+    time_array = forecast.CreateForecastDatesArray(final_date, init_date, base_well)
 
     # This loop automatically calculates the slopes and trends from the history to set the forecast coefficients
     exp_coeff_dict = {}
@@ -72,15 +80,8 @@ def run():
     app.GetWindow().SetName(u'auxiliar')
     cross_plot = app.GetWindow(u'auxiliar')
 
-    well_names = field.GetWellNames()
-    producers = []
 
-    for well_name in well_names:
-        well = api.GetWell(well_name)
-        if 'Oil Production Rate' in well.GetCurveNames():
-            producers.append(well)
-
-    for prod_well in producers:
+    for prod_well in open_producers:
         log.Info("Calculation WOR/WCT for '{}'".format(prod_well.GetName()))
         splitted_curve_names = forecast.BisectArrays(prod_well.GetName(), init_date, 1)
 
@@ -117,7 +118,7 @@ def run():
     path = GetFilePath(study.name)
 
     with open(os.path.join(path, 'Coeffs_file.txt'), 'w') as out_file:
-        producer_names = [producer.GetName() for producer in producers]
+        producer_names = [producer.GetName() for producer in open_producers]
         json.dump([study.name, producer_names, exp_coeff_dict, wcfit_coeff_dict, worfit_coeff_dict], out_file)
 
     if not os.path.isdir(path_mapper['/scripts_output']):
@@ -128,7 +129,7 @@ def run():
 
     # This loop calculates the forecast curves based on the information provided above, for all producer wells in
     # the study
-    for prod_well in producers:
+    for prod_well in open_producers:
         well_name = prod_well.GetName()
         log.Info("Forecasting for '{}'".format(prod_well.GetName()))
 
@@ -202,7 +203,7 @@ def run():
     object_id_ws = macro_context.GetWorkspaceId(macro_id=(u'Created', u'CreateWorkspace', ws, 0), name='DCA Analysis')
     script.ChangeAttrs(expected_class_name='WorkspaceInTabSubject', attrs={'name': 'DCA Analysis'},
                        object_id=object_id_ws)
-    well_name = producers[0].GetName()
+    well_name = open_producers[0].GetName()
 
     # Create Cross plot #1
     cpw = script.CreateCrossPlotWindow()
@@ -237,7 +238,7 @@ def run():
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': u'Oil Production Total ($unit)'},
                        object_id=object_id_2)
 
-    for prod_well in producers:
+    for prod_well in open_producers:
         well_name = prod_well.GetName()
         script.ChangeApplicationSettings(setting_name=unicode(
             'CURVE_PROPS_input_reader_00001.' + well_name + '.realization#^user#^unknown_data#^Oil Production Total (Exponential Forecast):^:realization#^user#^unknown_data#^Oil Production Rate (Exponential Forecast):^:Curve'),
@@ -312,7 +313,7 @@ def run():
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': u'Oil Production Total ($unit)'},
                        object_id=object_id_5)
 
-    for prod_well in producers:
+    for prod_well in open_producers:
         script.ChangeApplicationSettings(
             setting_name=u'CURVE_PROPS_input_reader_00001.' + prod_well.GetName() + '.realization#^user#^unknown_data#^Oil Production Total (History):^:realization#^custom#^unknown_data#^WOR:^:Curve',
             value={u'pen_color': (34, 139, 34), u'symbol_color': (184, 134, 11), u'symbol_style': -1,

@@ -1,5 +1,5 @@
 '''
-Created on 5 de out de 2015
+Created on 21 de jul de 2017
 
 @author: viniciusgs
 '''
@@ -83,7 +83,9 @@ def WORFitCoeff(wor, opt):
         final_position = first_cut_position + second_cut_position
 
         new_opt = opt_cut[final_position:]
+        np.putmask(new_opt, np.isinf(new_opt), 0)
         new_wor = wor_log[final_position:]
+        np.putmask(new_wor, np.isinf(new_wor), 0)
 
         curve_fit_model = lambda x,a,b: a * x + b
         popt, pcov = curve_fit(curve_fit_model, new_opt, new_wor)
