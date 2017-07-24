@@ -32,6 +32,12 @@ def gas_cap_expansion(Bti, Bg, Bgi):
     
     return Eg
 
+def delta_P(Pi, BHP):
+    
+    deltaP = Pi - BHP
+    
+    return deltaP
+
 def pore_volume_reduction_connate_water_expansion(m , Boi, cw, Swi, cf, deltaP):
     
     Efw = (1.0 + m)*Boi*((cw*Swi+cf)/(1.0-Swi))*deltaP

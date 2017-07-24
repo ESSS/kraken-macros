@@ -9,14 +9,14 @@ from formlayout import fedit
 
 def pvt_datalist():
     return [('B<sub>oi</sub>', 1.9),
-            ('R<sub>si</sub>', 1),
-            ('B<sub>gi</sub>', 0.00052),
+            ('R<sub>si</sub>', 500.0),
+            ('B<sub>gi</sub>', 0.0052),
             ('P<sub>i</sub>', 4000.0 ),
             ('B<sub>o</sub>', 1.1),
             ('B<sub>g</sub>', 0.00025),
             ('B<sub>w</sub>', 1.038),
             ('B<sub>t</sub>', 1.18 ),
-            ('R<sub>s</sub>', 1),
+            ('R<sub>s</sub>', 120.0),
             ('Average Pressure', 2000.0),
             ]
     
