@@ -1,0 +1,9 @@
+<toolSet name="External Tools">
+  <tool name="Kraken Macro Builder" showInMainMenu="true" showInEditor="true" showInProject="true" showInSearchPopup="true" disabled="false" useConsole="true" showConsoleOnStdOut="true" showConsoleOnStdErr="true" synchronizeAfterRun="false">
+    <exec>
+      <option name="COMMAND" value="/opt/anaconda2/bin/python2.7" />
+      <option name="PARAMETERS" value="SProjectFileDir$\tools\kmacro_builder.py $FilePath$" />
+      <option name="WORKING_DIRECTORY" value="/opt/anaconda2/bin" />
+    </exec>
+  </tool>
+</toolSet>

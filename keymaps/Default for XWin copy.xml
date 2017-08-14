@@ -1,0 +1,5 @@
+<keymap version="1" name="Default for XWin copy" parent="Default for XWin">
+  <action id="Tool_External Tools_Kraken Macro Builder">
+    <keyboard-shortcut first-keystroke="alt k" />
+  </action>
+</keymap>
