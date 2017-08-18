@@ -12,17 +12,28 @@ Generate plots with the results
 from __future__ import unicode_literals
 from mbalcore.mbalui import show_mbal_dialog
 from mbalcore.mbal_functions import oil_in_place, production_injection_balance, formation_total_volume_factor, dissolved_oil_and_gas_expansion, gas_cap_expansion, pore_volume_reduction_connate_water_expansion
-from mbalcore.average_pressure import delta_P, productivity_index, reservoir_pressure 
+from mbalcore.average_pressure import delta_P, productivity_index, reservoir_pressure
 from ben10.foundation import log
+import numpy
 
 #Getting production variables values
 study = api.GetStudy()
 field = study.GetField()
+well_names = field.GetWellNames()
+producers = []
+for well_name in well_names:
+    well = field.GetWell(well_name).GetSubject().GetOutput(time_step_index=0)()
+    if 1 in well.GetType(1):
+        producers.append(well_name)
+
+print producers
+
 opt_curve = field.GetCurve("Oil Production Total")
 opt = opt_curve.y
 wpt_curve = field.GetCurve("Water Production Total")
 wpt = wpt_curve.y
-rs_curve = field.GetCurve("Gas Oil Ratio")
+random_well = field.GetWell(producers[0])
+rs_curve = random_well.GetCurve("Gas Oil Ratio")
 rs = rs_curve.y
 wit_curve = field.GetCurve("Water Injection Total")
 wit = wit_curve.y
@@ -49,31 +60,29 @@ field.AddCurve("Oil In Place (mbal)", opt_curve.GetTimeSet(), N, opt_curve.GetUn
 
 #Average Reservoir Pressure
 well_names = field.GetWellNames()
-producers = field.GetProducerWellNames()
 
-# for well_name in well_names:
-#         well = api.GetProd(well_name)
-#         if 'Oil Production Rate' in well.GetCurveNames():
-#             producers.append(well)
-#         if 'Bottom Hole Pressure' in well.GetCurveNames():
-#             producers.append(well)
-            
+prod_wells = []
+
 for prod_well_name in producers:
-    #prod_wells = []          
     prod_well = field.GetWell(prod_well_name)
-    #prod_wells.append(prod_well)
+    prod_wells.append(prod_well)
     opr_curve = prod_well.GetCurve('Oil Production Rate')
     opr = opr_curve.y
     BHP_curve = prod_well.GetCurve('Bottom-hole Pressure')
     BHP = BHP_curve.y
-    DD = result['Pi'] - BHP
-print DD
 
-J = opr/DD
+    DD = result['Pi']-BHP
+    prod_well.AddCurve("Drawdown", opr_curve.GetTimeSet(), DD, "bar")
+
+    position = numpy.flatnonzero(opr)[0]
+    OPR = opr[position]
+    BHP_pressure = BHP[position]
+    J = OPR/(result['Pi']-BHP_pressure)
+
+    Ps = BHP + (1/J)*opr
+    prod_well.AddCurve("Static Pressure", opr_curve.GetTimeSet(), Ps, "bar")
+
+print OPR
+print BHP_pressure
 print J
-
-#Ps = BHP + opr/J
-#print Ps
-
-prod_wells.AddCurve("Productivity Index", opr_curve.GetTimeSet(), J, " ")
 
