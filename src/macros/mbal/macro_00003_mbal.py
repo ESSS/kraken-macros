@@ -20,16 +20,25 @@ import numpy
 study = api.GetStudy()
 field = study.GetField()
 well_names = field.GetWellNames()
+
+#Getting Producer Well list
 producers = []
+
 for well_name in well_names:
     well = field.GetWell(well_name).GetSubject().GetOutput(time_step_index=0)()
     if 1 in well.GetType(1):
         producers.append(well_name)
 
-print producers
+field_oil_prod_total = 0
+#summing productions to Get Field Value
+for prod_well in producers:
+    well = field.GetWell(prod_well)
+    oil_prod_total_curve = well.GetCurve('Oil Production Total')
+    oil_prod_total = oil_prod_total_curve.y
+    field_oil_prod_total = field_oil_prod_total + oil_prod_total[-1]
 
-opt_curve = field.GetCurve("Oil Production Total")
-Np = opt_curve.y
+opt_curve = well.GetCurve("Oil Production Total")
+Np = field_oil_prod_total
 wpt_curve = field.GetCurve("Water Production Total")
 Wp = wpt_curve.y
 random_well = field.GetWell(producers[0])
