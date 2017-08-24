@@ -46,9 +46,9 @@ def pore_volume_reduction_connate_water_expansion(m , Boi, cw, Swi, cf, deltaP):
     
     return Efw
 
-def oil_in_place(F, Eo, m, Eg, Efw, We):
+def oil_in_place(F, We, Eo, m, Eg, Efw):
     
-    oil_in_place = (F/(Eo + m*Eg + Efw)) + We
+    oil_in_place = abs((F - We)/(Eo + m*Eg + Efw))
     
     return oil_in_place
 
