@@ -8,40 +8,42 @@ import PyQt5
 from formlayout import fedit
 
 def pvt_datalist():
-    return [('B<sub>oi</sub>', 1.9),
-            ('R<sub>si</sub>', 500.0),
-            ('B<sub>gi</sub>', 0.0052),
-            ('P<sub>i</sub>', 4000.0 ),
-            ('B<sub>o</sub>', 1.1),
-            ('B<sub>g</sub>', 0.00025),
-            ('B<sub>w</sub>', 1.038),
-            ('B<sub>t</sub>', 1.18 ),
-            ('R<sub>s</sub>', 120.0),
-            ('Average Pressure', 2000.0),
+    return [('B<sub>oi</sub>', 1.8),
+            ('R<sub>si</sub>', 14.0),
+            ('B<sub>gi</sub>', 0.058),
+            ('P<sub>i</sub> (psi)', 4000.0 ),
+            ('B<sub>o</sub>', 1.2),
+            ('B<sub>g</sub>', 0.0032),
+            ('B<sub>w</sub>', 1.04),
+            ('B<sub>t</sub>', 2.05 ),
+            ('R<sub>sb</sub>', 16.0),
+            ('Average Pressure (psi)', 2000.0),
             ]
     
 def production_injection_datalist():
-    return [('N<sub>p<\sub>', 12000000.0),
-            ('W<sub>p<\sub>', 11600000.0),
-            ('G<sub>p<\sub>', 1000.0),
+    return [('N<sub>p<\sub> (bbl)', 12000000.0),
+            ('W<sub>p<\sub> (bbl)', 11600000.0),
+            ('G<sub>p<\sub> (scf)', 1000.0),
             (None, None),
             (None, 'Injection Data:'),
-            ('W<sub>inj<\sub>', 1100000.0),
-            ('B<sub>winj<\sub>', 1.038),
-            ('G<sub>inj<\sub>', 0),
+            ('W<sub>inj<\sub> (bbl)', 1100000.0),
+            ('B<sub>winj<\sub>', 1.03),
+            ('G<sub>inj<\sub> (bbl)', 200.0),
             ('B<sub>ginj<\sub>', 0.002)
             ]
     
 def drive_mechanisms_datalist():
     return [('Gas Cap', True),
             ('m', 0.33),
+            (None, None),
             ('Water Influx', True),
-            ('W<sub>e<\sub>', 2.0),
+            ('W<sub>e<\sub> (bbl)', 1000000.0),
+            (None, None),
             ('Pore Volume reduction and Connate Water expansion', True),
-            ('c<sub>w<\sub>', 0.0000467),
-            ('c<sub>f<\sub>', 0.0000484),
+            ('c<sub>w<\sub> (psi<sup>-1</sup>)', 0.0000467),
+            ('c<sub>f<\sub> (psi<sup>-1</sup>)', 0.0000484),
             ('S<sub>wi<\sub>',0.15),
-            ('deltaP', 2000.0),
+            ('deltaP (psi)', 2000.0),
             ]
             
 def show_mbal_dialog():
@@ -61,8 +63,8 @@ def show_mbal_dialog():
     result['Bg'] = dialog_result[0][5]
     result['Bw'] = dialog_result[0][6]
     result['Bt'] = dialog_result[0][7]
-    result['Rs'] = dialog_result[0][8]
-    result['AveragePressure'] = dialog_result[0][9]
+    result['Rsb'] = dialog_result[0][8]
+    result['Average Pressure'] = dialog_result[0][9]
 
     result['Np'] = dialog_result[1][0]
     result['Wp'] = dialog_result[1][1]

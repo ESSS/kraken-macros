@@ -11,7 +11,7 @@ Generate plots with the results
 
 from __future__ import unicode_literals
 from mbalcore.mbalui import show_mbal_dialog
-from mbalcore.mbal_functions import oil_in_place, production_injection_balance, formation_total_volume_factor, dissolved_oil_and_gas_expansion, gas_cap_expansion, pore_volume_reduction_connate_water_expansion
+import mbalcore.mbal_functions as mbf
 from mbalcore.average_pressure import delta_P, productivity_index, reservoir_pressure
 from ben10.foundation import log
 import numpy
@@ -29,34 +29,61 @@ for well_name in well_names:
 print producers
 
 opt_curve = field.GetCurve("Oil Production Total")
-opt = opt_curve.y
+Np = opt_curve.y
 wpt_curve = field.GetCurve("Water Production Total")
-wpt = wpt_curve.y
+Wp = wpt_curve.y
 random_well = field.GetWell(producers[0])
 rs_curve = random_well.GetCurve("Gas Oil Ratio")
-rs = rs_curve.y
+Rs = rs_curve.y
 wit_curve = field.GetCurve("Water Injection Total")
-wit = wit_curve.y
+Winj = wit_curve.y
 git_curve = field.GetCurve("Gas Injection Total")
-git = git_curve.y
+Ginj = git_curve.y
 result = show_mbal_dialog()
 
-FTVF = formation_total_volume_factor(result['Bo'], result['Bg'], result['Rs'], result['Rsi'])
+Bti = result['Boi']
+Bt = mbf.formation_total_volume_factor(result['Bo'], result['Bg'], result['Rsb'], Rs, result['Rsi'])
 
-F = production_injection_balance(opt, result['Bt'], rs, 
-                                 result['Rsi'], result['Bg'], wpt, 
-                                 result['Bw'], wit, result['Bwinj'], 
-                                 git, result['Bginj'])
+print "Bti = ", Bti
+print "Bt = ", Bt
+print "Rsi = ", result['Rsi']
+print "Rsb = ", result['Rsb']
+print "Bg = ", result['Bg']
+print "Bw = ", result['Bw']
+print "Bwinj = ", result['Bwinj']
+print "Bginj = ", result['Bginj']
 
-Eo = dissolved_oil_and_gas_expansion(result['Bt'], FTVF)
-Eg = gas_cap_expansion(result['Bg'], result['Bgi'], FTVF)
-Efw = pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cf'], result['cw'], result['Swi'], result['deltaP'])
-N = oil_in_place(F, Eo, result['m'], Eg, Efw, We = 0)
+
+F, produced_oil, produced_water, injected_gas, injected_water = mbf.production_injection_balance(Np, result['Bt'], Rs,
+                                  result['Rsi'], result['Bg'], Wp,
+                                  result['Bw'], Winj, result['Bwinj'],
+                                  Ginj, result['Bginj'], result['We'])
+
+print "F =", F
+print "Produced Oil = ", produced_oil
+print "Produced Water = ", produced_water
+print "Injected Water = ", injected_water
+print "Injected Gas = ", injected_gas
+
+
+Eo = mbf.dissolved_oil_and_gas_expansion(result['Bt'], Bti)
+print "Eo = ", Eo
+Eg = mbf.gas_cap_expansion(Bti, result['Bg'], result['Bgi'])
+print "Eg = ", Eg
+
+Efw = mbf.pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cw'], result['Swi'], result['cf'], result['deltaP'])
+print "Efw = ", Efw
+We = result['We']
+print "We = ", We
+N = mbf.oil_in_place(F, Eo, result['m'], Eg, Efw, We)
+
 
 #log.Info("Eo = '{}'".format(Eo))
 
 field.AddCurve("Oil In Place (mbal)", opt_curve.GetTimeSet(), N, opt_curve.GetUnit())
-#field.AddCurve("Dissolved oil and gas expansion", opt_curve.GetTimeSet(), Eo, "bbl/scf")
+#field.AddCurve("Dissolved oil and gas expansion", opt_curve.GetTimeSet(), Eo, "bbl/bbl")
+#field.AddCurve("Produced oil", opt_curve.GetTimeSet(), F, "<mult>")
+
 
 #Average Reservoir Pressure
 well_names = field.GetWellNames()
@@ -71,13 +98,13 @@ for prod_well_name in producers:
     BHP_curve = prod_well.GetCurve('Bottom-hole Pressure')
     BHP = BHP_curve.y
 
-    DD = result['Pi']-BHP
+    DD = result['Pi'] - BHP
     prod_well.AddCurve("Drawdown", opr_curve.GetTimeSet(), DD, "bar")
 
     position = numpy.flatnonzero(opr)[0]
     OPR = opr[position]
     BHP_pressure = BHP[position]
-    J = OPR/(result['Pi']-BHP_pressure)
+    J = OPR/(result['Pi'] - BHP_pressure)
 
     Ps = BHP + (1/J)*opr
     prod_well.AddCurve("Static Pressure", opr_curve.GetTimeSet(), Ps, "bar")
@@ -85,4 +112,5 @@ for prod_well_name in producers:
 print OPR
 print BHP_pressure
 print J
+
 
