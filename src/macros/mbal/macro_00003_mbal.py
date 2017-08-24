@@ -41,6 +41,7 @@ git_curve = field.GetCurve("Gas Injection Total")
 Ginj = git_curve.y
 result = show_mbal_dialog()
 
+#Formation Total Volume Factor
 Bti = result['Boi']
 Bt = mbf.formation_total_volume_factor(result['Bo'], result['Bg'], result['Rsb'], Rs, result['Rsi'])
 
@@ -53,7 +54,7 @@ print "Bw = ", result['Bw']
 print "Bwinj = ", result['Bwinj']
 print "Bginj = ", result['Bginj']
 
-
+#Underground withdrawal
 F, produced_oil, produced_water, injected_gas, injected_water = mbf.production_injection_balance(Np, result['Bt'], Rs,
                                   result['Rsi'], result['Bg'], Wp,
                                   result['Bw'], Winj, result['Bwinj'],
@@ -65,24 +66,31 @@ print "Produced Water = ", produced_water
 print "Injected Water = ", injected_water
 print "Injected Gas = ", injected_gas
 
-
+#Oil Expansion and dissolved gas
 Eo = mbf.dissolved_oil_and_gas_expansion(result['Bt'], Bti)
 print "Eo = ", Eo
+
+#Gas Cap Expansion
 Eg = mbf.gas_cap_expansion(Bti, result['Bg'], result['Bgi'])
 print "Eg = ", Eg
 
+#Initial water expansion and reduction of the pore volume
 Efw = mbf.pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cw'], result['Swi'], result['cf'], result['deltaP'])
 print "Efw = ", Efw
+
+#Water Influx
 We = result['We']
 print "We = ", We
+
+#Oil in Place Volume
 N = mbf.oil_in_place(F, Eo, result['m'], Eg, Efw, We)
-
-
-#log.Info("Eo = '{}'".format(Eo))
-
 field.AddCurve("Oil In Place (mbal)", opt_curve.GetTimeSet(), N, opt_curve.GetUnit())
 #field.AddCurve("Dissolved oil and gas expansion", opt_curve.GetTimeSet(), Eo, "bbl/bbl")
 #field.AddCurve("Produced oil", opt_curve.GetTimeSet(), F, "<mult>")
+
+#No inital gas cap and no water influx
+N1 = mbf.oil_in_place_modified(F, Eo)
+field.AddCurve("Oil in Place Modified", opt_curve.GetTimeSet(), N1, opt_curve.GetUnit())
 
 
 #Average Reservoir Pressure

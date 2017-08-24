@@ -51,3 +51,8 @@ def oil_in_place(F, Eo, m, Eg, Efw, We):
     oil_in_place = (F/(Eo + m*Eg + Efw)) + We
     
     return oil_in_place
+
+def oil_in_place_modified(F, Eo):
+    oil_in_place_modified = F/Eo
+
+    return oil_in_place_modified
