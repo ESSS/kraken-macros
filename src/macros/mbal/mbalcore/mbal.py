@@ -29,11 +29,11 @@ P = 100
 Pi = 5000
 Bo = 1.1
 
-Bt = mbalf.formation_total_volume_factor(Bo, Rsb, Rs, Bg)
-Bti = mbalf.initial_formation_total_volume_factor(Bti, Boi)
+Bt = mbalf.formation_total_volume_factor(Rsb, Rs, Bo, Bg)
 Eo = mbalf.dissolved_oil_and_gas_expansion(Bt, Bti)
 Eg = mbalf.gas_cap_expansion(Bti, Bg, Bgi)
 F, produced_oil, produced_water, injected_gas, injected_water = mbalf.production_injection_balance(Np, Bt, Rs, Rsi, Bg, Wp, Bw, Winj, Bwinj, Ginj, Bginj)
+dP = mbalf.deltaP(Pi, Pavg)
 Efw = mbalf.pore_volume_reduction_connate_water_expansion(m, Boi, cw, Swi, cf, deltaP)
 
 print("Eg =", Eg)

@@ -12,7 +12,7 @@ Generate plots with the results
 from __future__ import unicode_literals
 from mbalcore.mbalui import show_mbal_dialog
 import mbalcore.mbal_functions as mbf
-from mbalcore.average_pressure import delta_P, productivity_index, reservoir_pressure
+from mbalcore.average_pressure import pressure_drop, productivity_index, reservoir_pressure
 from ben10.foundation import log
 import numpy
 
@@ -52,7 +52,7 @@ result = show_mbal_dialog()
 
 #Formation Total Volume Factor
 Bti = result['Boi']
-Bt = mbf.formation_total_volume_factor(result['Bo'], result['Bg'], result['Rsb'], Rs, result['Rsi'])
+Bt = mbf.formation_total_volume_factor(result['Rsb'], Rs, result['Bo'], result['Bg'])
 
 print "Bti = ", Bti
 print "Bt = ", Bt
@@ -64,7 +64,7 @@ print "Bwinj = ", result['Bwinj']
 print "Bginj = ", result['Bginj']
 
 #Underground withdrawal
-F, produced_oil, produced_water, injected_gas, injected_water = mbf.production_injection_balance(Np, result['Bt'], Rs,
+F, produced_oil, produced_water, injected_gas, injected_water = mbf.production_injection_balance(Np, Bt, Rs,
                                   result['Rsi'], result['Bg'], Wp,
                                   result['Bw'], Winj, result['Bwinj'],
                                   Ginj, result['Bginj'], result['We'])
@@ -76,15 +76,18 @@ print "Injected Water = ", injected_water
 print "Injected Gas = ", injected_gas
 
 #Oil Expansion and dissolved gas
-Eo = mbf.dissolved_oil_and_gas_expansion(result['Bt'], Bti)
+Eo = mbf.dissolved_oil_and_gas_expansion(Bt, Bti)
 print "Eo = ", Eo
 
 #Gas Cap Expansion
 Eg = mbf.gas_cap_expansion(Bti, result['Bg'], result['Bgi'])
 print "Eg = ", Eg
 
+#Delta Pressure
+deltaP = result['Pi'] - result['Pavg']
+
 #Initial water expansion and reduction of the pore volume
-Efw = mbf.pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cw'], result['Swi'], result['cf'], result['deltaP'])
+Efw = mbf.pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cw'], result['Swi'], result['cf'], deltaP)
 print "Efw = ", Efw
 
 #Water Influx
@@ -95,11 +98,19 @@ print "We = ", We
 N = mbf.oil_in_place(F, Eo, result['m'], Eg, Efw, We)
 field.AddCurve("Oil In Place (mbal)", opt_curve.GetTimeSet(), N, opt_curve.GetUnit())
 #field.AddCurve("Dissolved oil and gas expansion", opt_curve.GetTimeSet(), Eo, "bbl/bbl")
-#field.AddCurve("Produced oil", opt_curve.GetTimeSet(), F, "<mult>")
+field.AddCurve("Produced oil", opt_curve.GetTimeSet(), F, "<mult>")
 
 #No inital gas cap and no water influx
-N1 = mbf.oil_in_place_modified(F, Eo)
-field.AddCurve("Oil in Place Modified", opt_curve.GetTimeSet(), N1, opt_curve.GetUnit())
+N1 = mbf.oil_in_place_oil_gas_expansion(F, Eo)
+field.AddCurve("Oil in Place (Oil and Gas Expansion)", opt_curve.GetTimeSet(), N1, opt_curve.GetUnit())
+
+#Initial Gas Cap Reservoirs
+N2 = mbf.oil_in_place_gas_cap(F, Eo, result['m'], Eg)
+#field.AddCurve("Oil in Place (Gas Cap)", opt_curve.GetTimeSet(), N2, "bbl")
+
+#Water Influx
+N3 = mbf.oil_in_place_water_influx(F, We, Eo)
+#field.AddCurve("Oil in Place (Water Influx)", opt_curve.GetTimeSet(), N3, "bbl")
 
 
 #Average Reservoir Pressure

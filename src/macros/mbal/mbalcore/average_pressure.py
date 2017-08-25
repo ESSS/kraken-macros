@@ -5,9 +5,9 @@ Created on 19 de jul de 2017
 '''
 import numpy as np
 
-def delta_P(Pi, BHP):
-    deltaP = Pi - BHP
-    return deltaP
+def pressure_drop(Pi, BHP):
+    delta_Pressure = Pi - BHP
+    return delta_Pressure
 
 def productivity_index(opr, deltaP):
     J = opr/deltaP

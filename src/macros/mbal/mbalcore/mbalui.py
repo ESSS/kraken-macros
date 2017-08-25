@@ -13,13 +13,12 @@ def pvt_datalist():
             ('B<sub>o</sub>', 1.2),
             ('B<sub>g</sub>', 0.0032),
             ('B<sub>w</sub>', 1.04),
-            ('B<sub>t</sub>', 2.05 ),
             ('B<sub>winj<\sub>', 1.03),
             ('B<sub>ginj<\sub>', 0.002),
             ('R<sub>si</sub>', 14.0),
             ('R<sub>sb</sub>', 16.0),
-            ('P<sub>i</sub> (psi)', 4000.0 ),
-            ('Average Pressure (psi)', 2000.0),
+            ('P<sub>i</sub> (psi)', 4000.0),
+            ('P<sub>avg</sub> (psi)', 2000.0),
             ]
 
 def drive_mechanisms_datalist():
@@ -27,13 +26,12 @@ def drive_mechanisms_datalist():
             ('m', 0.33),
             (None, None),
             ('Water Influx', True),
-            ('W<sub>e<\sub> (bbl)', 1000000.0),
+            ('W<sub>e<\sub> (bbl)', 1000.0),
             (None, None),
             ('Pore Volume reduction and Connate Water expansion', True),
             ('c<sub>w<\sub> (psi<sup>-1</sup>)', 0.0000467),
             ('c<sub>f<\sub> (psi<sup>-1</sup>)', 0.0000484),
             ('S<sub>wi<\sub>',0.15),
-            ('deltaP (psi)', 2000.0),
             ]
             
 def show_mbal_dialog():
@@ -49,13 +47,12 @@ def show_mbal_dialog():
     result['Bo'] = dialog_result[0][2]
     result['Bg'] = dialog_result[0][3]
     result['Bw'] = dialog_result[0][4]
-    result['Bt'] = dialog_result[0][5]
-    result['Bwinj'] = dialog_result[0][6]
-    result['Bginj'] = dialog_result[0][7]
-    result['Rsi'] = dialog_result[0][8]
-    result['Rsb'] = dialog_result[0][9]
-    result['Pi'] = dialog_result[0][10]
-    result['Average Pressure'] = dialog_result[0][11]
+    result['Bwinj'] = dialog_result[0][5]
+    result['Bginj'] = dialog_result[0][6]
+    result['Rsi'] = dialog_result[0][7]
+    result['Rsb'] = dialog_result[0][8]
+    result['Pi'] = dialog_result[0][9]
+    result['Pavg'] = dialog_result[0][10]
     
     result['GasCap'] = dialog_result[1][0]
     result['m'] = dialog_result[1][1]
@@ -65,7 +62,5 @@ def show_mbal_dialog():
     result['cw'] = dialog_result[1][5]
     result['cf'] = dialog_result[1][6]
     result['Swi'] = dialog_result[1][7]
-    result['deltaP'] = dialog_result[1][8]
     
     return result
-    
