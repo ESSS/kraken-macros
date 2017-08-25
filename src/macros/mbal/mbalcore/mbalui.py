@@ -8,17 +8,16 @@ import PyQt5
 from formlayout import fedit
 
 def pvt_datalist():
-    return [('B<sub>oi</sub>', 1.8),
-            ('B<sub>gi</sub>', 0.058),
-            ('B<sub>o</sub>', 1.2),
-            ('B<sub>g</sub>', 0.0032),
-            ('B<sub>w</sub>', 1.04),
-            ('B<sub>t</sub>', 2.05 ),
-            ('B<sub>winj<\sub>', 1.03),
-            ('B<sub>ginj<\sub>', 0.002),
-            ('R<sub>si</sub>', 14.0),
-            ('R<sub>sb</sub>', 16.0),
-            ('P<sub>i</sub> (psi)', 4000.0 ),
+    return [('B<sub>oi</sub>', 1.35),
+            ('B<sub>gi</sub>', 0.001),
+            ('B<sub>o</sub>', 1.3),
+            ('B<sub>g</sub>', 0.0001),
+            ('B<sub>w</sub>', 1.008),
+            ('B<sub>winj<\sub>', 1.008),
+            ('B<sub>ginj<\sub>', 0.0001),
+            ('R<sub>si</sub>', 120.0),
+            ('R<sub>sb</sub>', 110.0),
+            ('P<sub>i</sub> (psi)', 4000.0),
             ('Average Pressure (psi)', 2000.0),
             ]
 
@@ -27,7 +26,7 @@ def drive_mechanisms_datalist():
             ('m', 0.33),
             (None, None),
             ('Water Influx', True),
-            ('W<sub>e<\sub> (bbl)', 1000000.0),
+            ('W<sub>e<\sub> (bbl)', 0.0),
             (None, None),
             ('Pore Volume reduction and Connate Water expansion', True),
             ('c<sub>w<\sub> (psi<sup>-1</sup>)', 0.0000467),
@@ -49,13 +48,12 @@ def show_mbal_dialog():
     result['Bo'] = dialog_result[0][2]
     result['Bg'] = dialog_result[0][3]
     result['Bw'] = dialog_result[0][4]
-    result['Bt'] = dialog_result[0][5]
-    result['Bwinj'] = dialog_result[0][6]
-    result['Bginj'] = dialog_result[0][7]
-    result['Rsi'] = dialog_result[0][8]
-    result['Rsb'] = dialog_result[0][9]
-    result['Pi'] = dialog_result[0][10]
-    result['Average Pressure'] = dialog_result[0][11]
+    result['Bwinj'] = dialog_result[0][5]
+    result['Bginj'] = dialog_result[0][6]
+    result['Rsi'] = dialog_result[0][7]
+    result['Rsb'] = dialog_result[0][8]
+    result['Pi'] = dialog_result[0][9]
+    result['Average Pressure'] = dialog_result[0][10]
     
     result['GasCap'] = dialog_result[1][0]
     result['m'] = dialog_result[1][1]

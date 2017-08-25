@@ -6,7 +6,7 @@ Created on Thu Jul 13 09:42:17 2017
 """
 import numpy as np
 
-def formation_total_volume_factor(Bo, Bg, Rsb, Rs, Rsi):
+def formation_total_volume_factor(Bo, Bg, Rsb, Rs):
 
     return np.where(Rs >= Rsb, Bo, Bo + Bg*(Rsb - Rs))
 
@@ -18,7 +18,7 @@ def production_injection_balance(Np, Bt, Rs, Rsi, Bg, Wp, Bw, Winj, Bwinj, Ginj,
     injected_gas = Ginj * Bginj
     water_influx = We
 
-    F =  (produced_oil +  produced_water - injected_water - injected_gas + water_influx)
+    F = (produced_oil + produced_water - injected_water - injected_gas + water_influx)
     
     return F, produced_oil, produced_water, injected_gas, injected_water
 
@@ -48,11 +48,12 @@ def pore_volume_reduction_connate_water_expansion(m , Boi, cw, Swi, cf, deltaP):
 
 def oil_in_place(F, We, Eo, m, Eg, Efw):
     
-    oil_in_place = abs((F - We)/(Eo + m*Eg + Efw))
+    oil_in_place = (F - We)/(Eo + m*Eg + Efw)
     
     return oil_in_place
 
 def oil_in_place_modified(F, Eo):
+
     oil_in_place_modified = F/Eo
 
     return oil_in_place_modified
