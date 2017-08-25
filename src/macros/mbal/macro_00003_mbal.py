@@ -115,6 +115,9 @@ print "Eo = ", Eo
 Eg = mbf.gas_cap_expansion(Bti, result['Bg'], result['Bgi'])
 print "Eg = ", Eg
 
+#Delta Pressure
+deltaP = result['Pi'] - result['Pavg']
+
 #Initial water expansion and reduction of the pore volume
 Efw = mbf.pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cw'], result['Swi'], result['cf'], result['deltaP'])
 print "Efw = ", Efw

@@ -10,6 +10,9 @@ def formation_total_volume_factor(Bo, Bg, Rsb, Rs):
 
     return np.where(Rs >= Rsb, Bo, Bo + Bg*(Rsb - Rs))
 
+'''
+ DOCUMENTACAO
+'''
 def production_injection_balance(Np, Bt, Rs, Rsi, Bg, Wp, Bw, Winj, Bwinj, Ginj, Bginj, We):
 
     produced_oil = (Np * (Bt + (Rs - Rsi) * Bg))
@@ -34,9 +37,9 @@ def gas_cap_expansion(Bti, Bg, Bgi):
     
     return Eg
 
-def delta_P(Pi, BHP):
+def deltaP(Pi, Pavg):
     
-    deltaP = Pi - BHP
+    deltaP = Pi - Pavg
     
     return deltaP
 
@@ -56,4 +59,16 @@ def oil_in_place_modified(F, Eo):
 
     oil_in_place_modified = F/Eo
 
-    return oil_in_place_modified
+    oil_in_place_oil_gas_expansion = F/Eo
+
+    return oil_in_place_oil_gas_expansion
+
+def oil_in_place_gas_cap(F, Eo, m, Eg):
+
+    oil_in_place_gas_cap = F/(Eo + m*Eg)
+
+def oil_in_place_water_influx (F, We, Eo):
+
+    oil_in_place_water_influx = (F - We)/Eo
+
+    return oil_in_place_water_influx

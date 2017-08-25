@@ -32,7 +32,6 @@ def drive_mechanisms_datalist():
             ('c<sub>w<\sub> (psi<sup>-1</sup>)', 0.0000467),
             ('c<sub>f<\sub> (psi<sup>-1</sup>)', 0.0000484),
             ('S<sub>wi<\sub>',0.15),
-            ('deltaP (psi)', 2000.0),
             ]
             
 def show_mbal_dialog():
@@ -63,7 +62,6 @@ def show_mbal_dialog():
     result['cw'] = dialog_result[1][5]
     result['cf'] = dialog_result[1][6]
     result['Swi'] = dialog_result[1][7]
-    result['deltaP'] = dialog_result[1][8]
     
     return result
     
