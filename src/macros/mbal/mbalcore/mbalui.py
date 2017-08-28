@@ -18,7 +18,7 @@ def pvt_datalist():
             ('R<sub>si</sub>', 120.0),
             ('R<sub>sb</sub>', 110.0),
             ('P<sub>i</sub> (psi)', 4000.0),
-            ('Average Pressure (psi)', 2000.0),
+            ('P<sub>avg</sub> (psi)', 2000.0),
             ]
 
 def drive_mechanisms_datalist():
@@ -52,7 +52,7 @@ def show_mbal_dialog():
     result['Rsi'] = dialog_result[0][7]
     result['Rsb'] = dialog_result[0][8]
     result['Pi'] = dialog_result[0][9]
-    result['Average Pressure'] = dialog_result[0][10]
+    result['Pavg'] = dialog_result[0][10]
     
     result['GasCap'] = dialog_result[1][0]
     result['m'] = dialog_result[1][1]

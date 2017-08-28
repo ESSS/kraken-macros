@@ -55,13 +55,12 @@ def oil_in_place(F, We, Eo, m, Eg, Efw):
     
     return oil_in_place
 
-def oil_in_place_modified(F, Eo):
+def oil_in_place_underg_withdrawal(F, Eo):
 
-    oil_in_place_modified = F/Eo
+    oil_in_place_underg_withdrawal = F/Eo
 
-    oil_in_place_oil_gas_expansion = F/Eo
 
-    return oil_in_place_oil_gas_expansion
+    return oil_in_place_underg_withdrawal
 
 def oil_in_place_gas_cap(F, Eo, m, Eg):
 

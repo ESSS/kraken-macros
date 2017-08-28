@@ -9,8 +9,8 @@ def pressure_drop(Pi, BHP):
     delta_Pressure = Pi - BHP
     return delta_Pressure
 
-def productivity_index(opr, deltaP):
-    J = opr/deltaP
+def productivity_index(opr, delta_Pressure):
+    J = opr/delta_Pressure
     return J 
 
 def reservoir_pressure(BHP, opr, J):

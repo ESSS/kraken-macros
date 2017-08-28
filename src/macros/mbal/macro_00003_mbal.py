@@ -12,7 +12,7 @@ Generate plots with the results
 from __future__ import unicode_literals
 from mbalcore.mbalui import show_mbal_dialog
 import mbalcore.mbal_functions as mbf
-from mbalcore.average_pressure import delta_P, productivity_index, reservoir_pressure
+from mbalcore.average_pressure import pressure_drop, productivity_index, reservoir_pressure
 import numpy as np
 
 #Getting production variables values
@@ -119,18 +119,18 @@ print "Eg = ", Eg
 deltaP = result['Pi'] - result['Pavg']
 
 #Initial water expansion and reduction of the pore volume
-Efw = mbf.pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cw'], result['Swi'], result['cf'], result['deltaP'])
+Efw = mbf.pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cw'], result['Swi'], result['cf'], deltaP)
 print "Efw = ", Efw
 
 #Water Influx
 We = result['We']
 print "We = ", We
 
-#Oil in Place Volume
+#Oil in Place Volume - GENERAL MATERIAL BALANCE
 N = mbf.oil_in_place(F, Eo, result['m'], Eg, Efw, We)
 print 'N = ', N[-1]
 
-field.AddCurve("Oil In Place (mbal)", time_set, N, 'm3')
+field.AddCurve("Oil In Place (mbal)", time_set, N, 'bbl')
 #field.AddCurve("Dissolved oil and gas expansion", opt_curve.GetTimeSet(), Eo, "bbl/bbl")
 field.AddCurve("F", time_set, F, 'm3')
 field.AddCurve("Produced Oil (Mbal)", time_set, produced_oil, 'm3')
@@ -140,12 +140,23 @@ field.AddCurve("Bt", time_set, Bt, 'bbl/bbl')
 field.AddCurve("Eo", time_set, Eo, 'bbl/bbl')
 
 
-#No inital gas cap and no water influx
-N1 = mbf.oil_in_place_modified(F, Eo)
-field.AddCurve("Oil in Place Modified", time_set, N1, 'm3')
+#SPECIFIC CASES
+
+#1 Only underground withdrawal
+N1 = mbf.oil_in_place_underg_withdrawal(F, Eo)
+field.AddCurve("Oil in Place (Oil and Gas Expansion)", time_set, N1, 'bbl')
+
+#2 Presence of inital gas cap
+N2 = mbf.oil_in_place_gas_cap(F, Eo, result['m'], Eg)
+field.AddCurve("Oil in Place (Gas Cap)", time_set, N2, 'bbl')
+
+#3 Presence of water influx
+N3 = mbf.oil_in_place_water_influx(F, Eo, result['We'])
+field.AddCurve("Oil in Place (Water Influx)", time_set, N3, 'bbl')
 
 
-#Average Reservoir Pressure
+
+#AVERAGE RESERVOIR PRESSURE DETERMINATION
 well_names = field.GetWellNames()
 prod_wells = []
 
