@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 '''
 Created on 5 de out de 2015
@@ -31,7 +31,7 @@ class CrossApiUtils(object):
         import time
 
         window_subject = ka_window.subject
-        for _i in xrange(5):
+        for _i in range(5):
 
             coloring_control = PluginManager.GetSingleton(EPColoringControl)
             colorings = coloring_control.GetCurrentColorings('visible', ka_model.subject.id, window_subject.id)

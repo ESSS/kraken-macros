@@ -5,7 +5,7 @@ Spyder Editor
 Este é um arquivo de script temporário.
 """
 import numpy as np
-import mbal_functions as mbalf
+from . import mbal_functions as mbalf
 
 #Material Balance
 ts =  np.array([30, 60, 90, 120])
@@ -36,18 +36,18 @@ F, produced_oil, produced_water, injected_gas, injected_water = mbalf.production
 dP = mbalf.deltaP(Pi, Pavg)
 Efw = mbalf.pore_volume_reduction_connate_water_expansion(m, Boi, cw, Swi, cf, deltaP)
 
-print("Eg =", Eg)
-print("Eo =", Eo)
-print("F = ", F)
+print(("Eg =", Eg))
+print(("Eo =", Eo))
+print(("F = ", F))
 
-print("Efw =", Efw)
+print(("Efw =", Efw))
 
 
 #Linearized equation
 
 N = mbalf.oil_in_place(F, Eo, m, Eg, Efw, We)
 
-print("N =", N)
+print(("N =", N))
 
 
 

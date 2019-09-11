@@ -6,7 +6,7 @@ Commands Description for Macro:
 
 '''
 # Import an utility package for manipulating rate curves
-from __future__ import unicode_literals
+
 from coilib50.time.time_step import TimeStep
 from coilib50.time.time_set import TimeSet
 from kraken20.plugins.api.ka_model import KAModel
@@ -33,7 +33,7 @@ class Forecaster:
         timeset = curve.GetTimeSet()
         initial_step = TimeStep.Create(initial_date.year, initial_date.month, initial_date.day)
         forecasting_delta = final_date - initial_date           
-        forecasting_timeset = timeset.CreateFromAbsoluteDeltasInDays(initial_step, xrange(forecasting_delta.days))
+        forecasting_timeset = timeset.CreateFromAbsoluteDeltasInDays(initial_step, range(forecasting_delta.days))
         return forecasting_timeset
 
 
@@ -59,11 +59,11 @@ class Forecaster:
         
         oil_rate = initial_oil_rate*np.exp(-Di*delta_in_years)
              
-        for i in xrange(len(oil_rate)-1):
+        for i in range(len(oil_rate)-1):
             
             cumulative_oil_array[i+1] = cumulative_oil_array[i] + oil_rate[i+1] #delta of 1 day        
         
-        exponential_curve_names = [u'Oil Production Rate (Exponential Forecast)', u'Oil Production Total (Exponential Forecast)']
+        exponential_curve_names = ['Oil Production Rate (Exponential Forecast)', 'Oil Production Total (Exponential Forecast)']
                 
         well.AddCurve(exponential_curve_names[0], time_array , oil_rate, 'm3/d')
         well.AddCurve(exponential_curve_names[1], time_array , cumulative_oil_array, 'm3')
@@ -92,11 +92,11 @@ class Forecaster:
         
         oil_rate = initial_oil_rate*(1 + Di*b*delta_in_years)**(-1/b)
         
-        for i in xrange(len(oil_rate)-1):
+        for i in range(len(oil_rate)-1):
             
             cumulative_oil_array[i+1] = cumulative_oil_array[i] + oil_rate[i+1] #delta of 1 day
         
-        hyperbolic_curve_names = [u'Oil Production Rate (Hyperbolic Forecast)', u'Oil Production Total (Hyperbolic Forecast)']
+        hyperbolic_curve_names = ['Oil Production Rate (Hyperbolic Forecast)', 'Oil Production Total (Hyperbolic Forecast)']
         
         well.AddCurve(hyperbolic_curve_names[0], time_array , oil_rate, 'm3/d')
         well.AddCurve(hyperbolic_curve_names[1], time_array , cumulative_oil_array, 'm3')
@@ -132,7 +132,7 @@ class Forecaster:
         produced_oil[0] = (initial_liquid_rate_bbl / (wor[0]+1) * 0.001)
         
         #arrays calculations    
-        for i in xrange(len(time_array)-1):
+        for i in range(len(time_array)-1):
             
             cumulative_oil_array[i+1] = cumulative_oil_array[i] + produced_oil[i]
             
@@ -143,7 +143,7 @@ class Forecaster:
         cumulative_oil_array_m3 = 158.9873 * cumulative_oil_array # constant is 1000 / 6.2898 (m3 to bbl)
         produced_oil_m3 = 158.9873 * produced_oil
        
-        wor_curve_names = [u'Oil Production Rate (WOR Forecast)', u'Oil Production Total (WOR Forecast)','Water Oil Ratio (WOR Forecast)']
+        wor_curve_names = ['Oil Production Rate (WOR Forecast)', 'Oil Production Total (WOR Forecast)','Water Oil Ratio (WOR Forecast)']
         
         well.AddCurve(wor_curve_names[0], time_array , produced_oil_m3, 'm3/d')
         well.AddCurve(wor_curve_names[1], time_array , cumulative_oil_array_m3, 'm3')
@@ -180,7 +180,7 @@ class Forecaster:
         produced_oil[0] = 0.001 * initial_liquid_rate * (1 - wc[0])
         
         #arrays calculations    
-        for i in xrange(len(time_array)-1):
+        for i in range(len(time_array)-1):
             
             cumulative_oil_array_wc[i+1] = cumulative_oil_array_wc[i] + produced_oil[i]
             
@@ -191,7 +191,7 @@ class Forecaster:
         cumulative_oil_array_m3 = 158.9873 * cumulative_oil_array_wc # constant is 1000 / 6.2898 (m3 to bbl)
         produced_oil_m3 = 158.9873 * produced_oil
         
-        wc_curve_names = [u'Oil Production Rate (WC Forecast)', u'Oil Production Total (WC Forecast)', u'Water Cut (WC Forecast)']
+        wc_curve_names = ['Oil Production Rate (WC Forecast)', 'Oil Production Total (WC Forecast)', 'Water Cut (WC Forecast)']
         
         well.AddCurve(wc_curve_names[0], time_array , produced_oil_m3, 'm3/d')
         well.AddCurve(wc_curve_names[1], time_array , cumulative_oil_array_m3, 'm3')
@@ -202,7 +202,7 @@ class Forecaster:
     
     def ConvertDatesInDeltaYears(self, time_array):
         time_array_years = np.zeros(len(time_array))           
-        for i in xrange(len(time_array)):
+        for i in range(len(time_array)):
             time_array_years[i] = (np.datetime64(time_array[i].date) - np.datetime64(time_array[0].date)) / np.timedelta64(1,'D') / 365.25
         return time_array_years
     
@@ -228,17 +228,17 @@ class Forecaster:
         original_values_array_wpr = well.GetCurve('Water Production Rate').GetY()
         original_values_array_opt += 0.0001
         initial_date = TimeStep.Create(initial_date.year, initial_date.month, initial_date.day)
-        splitted_curve_names = [u'Oil Production Rate (History)', u'Oil Production Total (History)']
+        splitted_curve_names = ['Oil Production Rate (History)', 'Oil Production Total (History)']
         if signal:
             position = bisect.bisect_left(original_time_set, initial_date)
             splitted_time_set = TimeSet.CreateFromTimeSteps(original_time_set[0], original_time_set[0:position])
             well.AddCurve(splitted_curve_names[0], splitted_time_set, original_values_array_opr[0:position], 'm3/d')
             well.AddCurve(splitted_curve_names[1], splitted_time_set, original_values_array_opt[0:position], 'm3')
-            well.AddCurve(u'Water Production Rate (History)',splitted_time_set, original_values_array_wpr[0:position], 'm3/d')   
+            well.AddCurve('Water Production Rate (History)',splitted_time_set, original_values_array_wpr[0:position], 'm3/d')   
         else:
             well.AddCurve(splitted_curve_names[0], original_time_set, original_values_array_opr, 'm3/d')
             well.AddCurve(splitted_curve_names[1], original_time_set, original_values_array_opt, 'm3')
-            well.AddCurve(u'Water Production Rate (History)',original_time_set, original_values_array_wpr, 'm3/d')
+            well.AddCurve('Water Production Rate (History)',original_time_set, original_values_array_wpr, 'm3/d')
         return tuple(splitted_curve_names)
 
 
@@ -249,7 +249,7 @@ class GroupForecaster:
     
     def GroupCalculations(self, groups_dict, time_array, opr_history, opt_history, wpr_history):
         
-        for group_name in groups_dict.keys():
+        for group_name in list(groups_dict.keys()):
               
             group = self.study.GetWellGroup(group_name)
             wells_in_group = groups_dict[group_name]
@@ -275,39 +275,39 @@ class GroupForecaster:
             for prd_well_name in wells_in_group:
                 prd_well = group.GetWell(prd_well_name) 
             
-                opr_group_history += prd_well.GetCurve(u'Oil Production Rate (History) (User)').y
-                opt_group_history += prd_well.GetCurve(u'Oil Production Total (History) (User)').y
-                wpr_group_history += prd_well.GetCurve(u'Water Production Rate (History) (User)').y
+                opr_group_history += prd_well.GetCurve('Oil Production Rate (History) (User)').y
+                opt_group_history += prd_well.GetCurve('Oil Production Total (History) (User)').y
+                wpr_group_history += prd_well.GetCurve('Water Production Rate (History) (User)').y
                   
-                exp_group_forecast += prd_well.GetCurve(u'Oil Production Rate (Exponential Forecast) (User)').y
-                exp_group_forecast_ttl += prd_well.GetCurve(u'Oil Production Total (Exponential Forecast) (User)').y
+                exp_group_forecast += prd_well.GetCurve('Oil Production Rate (Exponential Forecast) (User)').y
+                exp_group_forecast_ttl += prd_well.GetCurve('Oil Production Total (Exponential Forecast) (User)').y
                 
-                hyp_group_forecast += prd_well.GetCurve(u'Oil Production Rate (Hyperbolic Forecast) (User)').y
-                hyp_group_forecast_ttl += prd_well.GetCurve(u'Oil Production Total (Hyperbolic Forecast) (User)').y
+                hyp_group_forecast += prd_well.GetCurve('Oil Production Rate (Hyperbolic Forecast) (User)').y
+                hyp_group_forecast_ttl += prd_well.GetCurve('Oil Production Total (Hyperbolic Forecast) (User)').y
                 
-                opr_wor_group_forecast += prd_well.GetCurve(u'Oil Production Rate (WOR Forecast) (User)').y
-                opt_wor_group_forecast += prd_well.GetCurve(u'Oil Production Total (WOR Forecast) (User)').y
+                opr_wor_group_forecast += prd_well.GetCurve('Oil Production Rate (WOR Forecast) (User)').y
+                opt_wor_group_forecast += prd_well.GetCurve('Oil Production Total (WOR Forecast) (User)').y
                 
-                opr_wc_group_forecast += prd_well.GetCurve(u'Oil Production Rate (WC Forecast) (User)').y
-                opt_wc_group_forecast += prd_well.GetCurve(u'Oil Production Total (WC Forecast) (User)').y
+                opr_wc_group_forecast += prd_well.GetCurve('Oil Production Rate (WC Forecast) (User)').y
+                opt_wc_group_forecast += prd_well.GetCurve('Oil Production Total (WC Forecast) (User)').y
             
 #             wor_group_forecast = 
 #             wc_group_forecast = 
             
-            group.AddCurve(u'Oil Production Rate (History)',  opr_history.x, opr_group_history, 'm3/d')
-            group.AddCurve(u'Oil Production Total (History)',  opt_history.x, opt_group_history, 'm3')
-            group.AddCurve(u'Water Production Rate (History)',  wpr_history.x, wpr_group_history, 'm3/d')
+            group.AddCurve('Oil Production Rate (History)',  opr_history.x, opr_group_history, 'm3/d')
+            group.AddCurve('Oil Production Total (History)',  opt_history.x, opt_group_history, 'm3')
+            group.AddCurve('Water Production Rate (History)',  wpr_history.x, wpr_group_history, 'm3/d')
             
-            group.AddCurve(u'Oil Production Rate (Exponential Forecast)', time_array , exp_group_forecast, 'm3/d')
-            group.AddCurve(u'Oil Production Total (Exponential Forecast)', time_array , exp_group_forecast_ttl, 'm3')
+            group.AddCurve('Oil Production Rate (Exponential Forecast)', time_array , exp_group_forecast, 'm3/d')
+            group.AddCurve('Oil Production Total (Exponential Forecast)', time_array , exp_group_forecast_ttl, 'm3')
             
-            group.AddCurve(u'Oil Production Rate (Hyperbolic Forecast)', time_array , hyp_group_forecast, 'm3/d')
-            group.AddCurve(u'Oil Production Total (Hyperbolic Forecast)', time_array , hyp_group_forecast_ttl, 'm3')
+            group.AddCurve('Oil Production Rate (Hyperbolic Forecast)', time_array , hyp_group_forecast, 'm3/d')
+            group.AddCurve('Oil Production Total (Hyperbolic Forecast)', time_array , hyp_group_forecast_ttl, 'm3')
             
-            group.AddCurve(u'Oil Production Rate (WOR Forecast)', time_array , opr_wor_group_forecast, 'm3/d')
-            group.AddCurve(u'Oil Production Total (WOR Forecast)', time_array , opt_wor_group_forecast, 'm3')
+            group.AddCurve('Oil Production Rate (WOR Forecast)', time_array , opr_wor_group_forecast, 'm3/d')
+            group.AddCurve('Oil Production Total (WOR Forecast)', time_array , opt_wor_group_forecast, 'm3')
 #             group.AddCurve(u'Water Oil Ratio (WOR Forecast)', time_array, wor_group_forecast, 'm3/m3')
             
-            group.AddCurve(u'Oil Production Rate (WC Forecast)', time_array , opr_wc_group_forecast, 'm3/d')
-            group.AddCurve(u'Oil Production Total (WC Forecast)', time_array , opt_wc_group_forecast, 'm3')
+            group.AddCurve('Oil Production Rate (WC Forecast)', time_array , opr_wc_group_forecast, 'm3/d')
+            group.AddCurve('Oil Production Total (WC Forecast)', time_array , opt_wc_group_forecast, 'm3')
 #             group.AddCurve(u'Water Cut (WC Forecast)', time_array , wc_group_forecast, 'm3/m3')

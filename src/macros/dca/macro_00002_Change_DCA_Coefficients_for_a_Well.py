@@ -7,7 +7,7 @@ Generate plots with the results
 
 @author: Vinicius Girardi
 '''
-from __future__ import unicode_literals
+
 from dcacore.dcaui import show_curve_coeffs_dialog
 from dcacore.forecaster import Forecaster
 from dcacore.CrossCurveManipulations import CrossApiUtils

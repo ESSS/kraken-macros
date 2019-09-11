@@ -9,7 +9,7 @@ Generate plots with the results
 @author: ebio
 '''
 
-from __future__ import unicode_literals
+
 from mbalcore.mbalui import show_mbal_dialog
 import mbalcore.mbal_functions as mbf
 from mbalcore.average_pressure import pressure_drop, productivity_index, reservoir_pressure
@@ -94,14 +94,14 @@ else:
     np.putmask(Rs, np.isnan(Rs), 0)
 
 Bt = mbf.formation_total_volume_factor(result['Bo'], result['Bg'], result['Rsb'], Rs)
-print 'Bt = ', Bt
+print('Bt = ', Bt)
 
 #Underground withdrawal
 F, produced_oil, produced_water, injected_gas, injected_water = mbf.production_injection_balance(field_oil_prod_total, Bt, Rs,
                                   result['Rsi'], result['Bg'], field_water_prod_total,
                                   result['Bw'], field_water_inj_total, result['Bwinj'], field_gas_injection_total, result['Bginj'], result['We'])
 
-print "F =", F[-1]
+print("F =", F[-1])
 # print "Produced Oil = ", produced_oil
 # print "Produced Water = ", produced_water
 # print "Injected Water = ", injected_water
@@ -109,26 +109,26 @@ print "F =", F[-1]
 
 #Oil Expansion and dissolved gas
 Eo = mbf.dissolved_oil_and_gas_expansion(Bt, Bti)
-print "Eo = ", Eo
+print("Eo = ", Eo)
 
 #Gas Cap Expansion
 Eg = mbf.gas_cap_expansion(Bti, result['Bg'], result['Bgi'])
-print "Eg = ", Eg
+print("Eg = ", Eg)
 
 #Delta Pressure
 deltaP = result['Pi'] - result['Pavg']
 
 #Initial water expansion and reduction of the pore volume
 Efw = mbf.pore_volume_reduction_connate_water_expansion(result['m'], result['Boi'], result['cw'], result['Swi'], result['cf'], deltaP)
-print "Efw = ", Efw
+print("Efw = ", Efw)
 
 #Water Influx
 We = result['We']
-print "We = ", We
+print("We = ", We)
 
 #Oil in Place Volume - GENERAL MATERIAL BALANCE
 N = mbf.oil_in_place(F, Eo, result['m'], Eg, Efw, We)
-print 'N = ', N[-1]
+print('N = ', N[-1])
 
 field.AddCurve("Oil In Place (mbal)", time_set, N, 'bbl')
 #field.AddCurve("Dissolved oil and gas expansion", opt_curve.GetTimeSet(), Eo, "bbl/bbl")
