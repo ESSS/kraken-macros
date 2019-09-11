@@ -4,7 +4,7 @@ Created on 21 de jul de 2017
 @author: viniciusgs
 '''
 # Import an utility package for manipulating rate curves
-from __future__ import unicode_literals
+
 import numpy as np
 from scipy.optimize import curve_fit
 import bisect
@@ -59,7 +59,7 @@ def WORFitCoeff(wor, opt):
         wor_log = np.log10(wor_cut)
         wor_log_derivative = np.zeros(len(wor_log)-1)
 
-        for i in xrange(len(wor_log_derivative)):
+        for i in range(len(wor_log_derivative)):
             wor_log_derivative[i] =  (wor_log[i+1] - wor_log[i]) / (opt_cut[i+1] - opt_cut[i])
 
         curve_average = np.average(wor_log_derivative)
@@ -101,12 +101,12 @@ def SmartIntervalSearcher(curve_to_be_analysed):
         new_x_axis[i] = np.datetime64(data.date)
 
     if len(curve_to_be_analysed.x) > 20:
-        for i in xrange(len(curve_to_be_analysed)-1):
+        for i in range(len(curve_to_be_analysed)-1):
             delta = (new_x_axis[i+1] - new_x_axis[i]) / np.timedelta64(1,'D')
             derivative[i] = (curve_to_be_analysed.y[i+1] - curve_to_be_analysed.y[i]) / delta
 
         position = 0
-        for i in xrange(len(derivative)):
+        for i in range(len(derivative)):
             if derivative[-2-i] < 0:
                 pass
             else:

@@ -7,7 +7,7 @@ Generate plots with the results
  
 @author: Vinicius Girardi 
 '''
-from __future__ import unicode_literals
+
 import os
 import json
 import numpy as np
@@ -77,8 +77,8 @@ def run():
     ordereddict = script.GetOrderedDictClass()
 
     script.CreateCrossPlotWindow()
-    app.GetWindow().SetName(u'auxiliar')
-    cross_plot = app.GetWindow(u'auxiliar')
+    app.GetWindow().SetName('auxiliar')
+    cross_plot = app.GetWindow('auxiliar')
 
 
     for prod_well in open_producers:
@@ -188,19 +188,19 @@ def run():
     properties = []
 
     for curve in all_curve_names:
-        log.Info("Cross plot for '{}'".format(curve))
+        log.Info(f"Cross plot for '{curve}'")
         oil_production_total_forecast = script.GetPropertyTemplate(
-            unicode('_unknown_' + curve[1] + '__realization_user'))
+            str('_unknown_' + curve[1] + '__realization_user'))
         oil_production_rate_forecast = script.GetPropertyTemplate(
-            unicode('_unknown_' + curve[0] + '__realization_user'))
+            str('_unknown_' + curve[0] + '__realization_user'))
 
         properties.append(
             script.GetPropertyTemplateCrossedWithSource(oil_production_total_forecast, oil_production_rate_forecast,
-                                                        u'Curve'))
+                                                        'Curve'))
 
     # Create workspace and change its attributes
     ws = script.CreateWorkspace()
-    object_id_ws = macro_context.GetWorkspaceId(macro_id=(u'Created', u'CreateWorkspace', ws, 0), name='DCA Analysis')
+    object_id_ws = macro_context.GetWorkspaceId(macro_id=('Created', 'CreateWorkspace', ws, 0), name='DCA Analysis')
     script.ChangeAttrs(expected_class_name='WorkspaceInTabSubject', attrs={'name': 'DCA Analysis'},
                        object_id=object_id_ws)
     well_name = open_producers[0].GetName()
@@ -209,151 +209,151 @@ def run():
     cpw = script.CreateCrossPlotWindow()
     app.GetWindow().SetName('Production forecast')
 
-    study_id_0 = macro_context.GetStudyId(u'InputReader', name=study.name)
-    data_id_0 = macro_context.GetDataId(u'WellSelectorProcessSubject', name=well_name, study_id=study_id_0)
+    study_id_0 = macro_context.GetStudyId('InputReader', name=study.name)
+    data_id_0 = macro_context.GetDataId('WellSelectorProcessSubject', name=well_name, study_id=study_id_0)
 
-    coloring_id_0 = macro_context.GetColoringId(u'CrossPlotCurveCollectionColoringProcessSubject', data_id=data_id_0,
+    coloring_id_0 = macro_context.GetColoringId('CrossPlotCurveCollectionColoringProcessSubject', data_id=data_id_0,
                                                 window_id=cpw)
     script.ChangeAttrs(expected_class_name='CrossPlotCurveCollectionColoringProcessSubject', attrs={
-        u'crossed_curve_associations': [properties[0], properties[1], properties[2], properties[3], properties[4]]},
+        'crossed_curve_associations': [properties[0], properties[1], properties[2], properties[3], properties[4]]},
                        object_id=coloring_id_0)
 
     # change layout
     script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject',
-                       attrs={'axis_allocation_rule': u'axis_allocation_by_quantity'}, object_id=cpw)
-    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'coloring_strategy_id': u'Property Based'},
+                       attrs={'axis_allocation_rule': 'axis_allocation_by_quantity'}, object_id=cpw)
+    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'coloring_strategy_id': 'Property Based'},
                        object_id=cpw)
     script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'enable_title': True}, object_id=cpw)
-    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'title': u'$e'}, object_id=cpw)
+    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'title': '$e'}, object_id=cpw)
 
-    object_id_1 = cpw + u'.plot_window_axis_subject_0'
+    object_id_1 = cpw + '.plot_window_axis_subject_0'
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'use_local_title': True},
                        object_id=object_id_1)
-    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': u'Oil Production Rate ($unit)'},
+    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': 'Oil Production Rate ($unit)'},
                        object_id=object_id_1)
 
-    object_id_2 = cpw + u'.plot_window_axis_subject_8'
+    object_id_2 = cpw + '.plot_window_axis_subject_8'
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'use_local_title': True},
                        object_id=object_id_2)
-    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': u'Oil Production Total ($unit)'},
+    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': 'Oil Production Total ($unit)'},
                        object_id=object_id_2)
 
     for prod_well in open_producers:
         well_name = prod_well.GetName()
-        script.ChangeApplicationSettings(setting_name=unicode(
+        script.ChangeApplicationSettings(setting_name=str(
             'CURVE_PROPS_input_reader_00001.' + well_name + '.realization#^user#^unknown_data#^Oil Production Total (Exponential Forecast):^:realization#^user#^unknown_data#^Oil Production Rate (Exponential Forecast):^:Curve'),
-                                         value={u'pen_color': (0, 0, 0), u'symbol_color': (138, 43, 226),
-                                                u'symbol_style': -1, u'symbol_size': 10, u'curve_style': 1,
-                                                u'pen_width': 3, u'pen_style': 3})
+                                         value={'pen_color': (0, 0, 0), 'symbol_color': (138, 43, 226),
+                                                'symbol_style': -1, 'symbol_size': 10, 'curve_style': 1,
+                                                'pen_width': 3, 'pen_style': 3})
 
-        script.ChangeApplicationSettings(setting_name=unicode(
+        script.ChangeApplicationSettings(setting_name=str(
             'CURVE_PROPS_input_reader_00001.' + well_name + '.realization#^user#^unknown_data#^Oil Production Total (Hyperbolic Forecast):^:realization#^user#^unknown_data#^Oil Production Rate (Hyperbolic Forecast):^:Curve'),
-                                         value={u'pen_color': (210, 105, 30), u'symbol_color': (50, 205, 50),
-                                                u'symbol_style': -1, u'symbol_size': 10, u'curve_style': 1,
-                                                u'pen_width': 3, u'pen_style': 3})
+                                         value={'pen_color': (210, 105, 30), 'symbol_color': (50, 205, 50),
+                                                'symbol_style': -1, 'symbol_size': 10, 'curve_style': 1,
+                                                'pen_width': 3, 'pen_style': 3})
 
-        script.ChangeApplicationSettings(setting_name=unicode(
+        script.ChangeApplicationSettings(setting_name=str(
             'CURVE_PROPS_input_reader_00001.' + well_name + '.realization#^user#^unknown_data#^Oil Production Total (WC Forecast):^:realization#^user#^unknown_data#^Oil Production Rate (WC Forecast):^:Curve'),
-                                         value={u'pen_color': (65, 105, 225), u'symbol_color': (255, 20, 147),
-                                                u'symbol_style': -1, u'symbol_size': 10, u'curve_style': 1,
-                                                u'pen_width': 3, u'pen_style': 3})
+                                         value={'pen_color': (65, 105, 225), 'symbol_color': (255, 20, 147),
+                                                'symbol_style': -1, 'symbol_size': 10, 'curve_style': 1,
+                                                'pen_width': 3, 'pen_style': 3})
 
-        script.ChangeApplicationSettings(setting_name=unicode(
+        script.ChangeApplicationSettings(setting_name=str(
             'CURVE_PROPS_input_reader_00001.' + well_name + '.realization#^user#^unknown_data#^Oil Production Total (WOR Forecast):^:realization#^user#^unknown_data#^Oil Production Rate (WOR Forecast):^:Curve'),
-                                         value={u'pen_color': (34, 139, 34), u'symbol_color': (184, 134, 11),
-                                                u'symbol_style': -1, u'symbol_size': 10, u'curve_style': 1,
-                                                u'pen_width': 3, u'pen_style': 3})
+                                         value={'pen_color': (34, 139, 34), 'symbol_color': (184, 134, 11),
+                                                'symbol_style': -1, 'symbol_size': 10, 'curve_style': 1,
+                                                'pen_width': 3, 'pen_style': 3})
 
         if init_date:
-            script.ChangeApplicationSettings(setting_name=unicode(
+            script.ChangeApplicationSettings(setting_name=str(
                 'CURVE_PROPS_input_reader_00001.' + well_name + '.realization#^user#^unknown_data#^Oil Production Total (History):^:realization#^user#^unknown_data#^Oil Production Rate (History):^:Curve'),
-                                             value={u'pen_color': (0, 0, 0), u'symbol_color': (138, 43, 226),
-                                                    u'symbol_style': -1, u'symbol_size': 10, u'curve_style': 1,
-                                                    u'pen_width': 3, u'pen_style': 1})
+                                             value={'pen_color': (0, 0, 0), 'symbol_color': (138, 43, 226),
+                                                    'symbol_style': -1, 'symbol_size': 10, 'curve_style': 1,
+                                                    'pen_width': 3, 'pen_style': 1})
 
     # Create Cross plot #2
     cpw_2 = script.CreateCrossPlotWindow()
     app.GetWindow().SetName('Water Oil Ratio Forecast')
-    data_id_1 = macro_context.GetDataId(u'WellSelectorProcessSubject', name=well_name, study_id=study_id_0)
+    data_id_1 = macro_context.GetDataId('WellSelectorProcessSubject', name=well_name, study_id=study_id_0)
 
     oil_production_total__splitted = script.GetPropertyTemplate(
-        u'_unknown_Oil Production Total (History)__realization_user')
-    wor__realization_custom = script.GetPropertyTemplate(u'_unknown_Water-Oil Ratio__realization_user')
+        '_unknown_Oil Production Total (History)__realization_user')
+    wor__realization_custom = script.GetPropertyTemplate('_unknown_Water-Oil Ratio__realization_user')
     cross_1 = script.GetPropertyTemplateCrossedWithSource(oil_production_total__splitted, wor__realization_custom,
-                                                          u'Curve')
+                                                          'Curve')
 
     oil_production_total_wor = script.GetPropertyTemplate(
-        u'_unknown_Oil Production Total (WOR Forecast)__realization_user')
-    wor_forecast_user = script.GetPropertyTemplate(u'_unknown_Water Oil Ratio (WOR Forecast)__realization_user')
-    cross_2 = script.GetPropertyTemplateCrossedWithSource(oil_production_total_wor, wor_forecast_user, u'Curve')
+        '_unknown_Oil Production Total (WOR Forecast)__realization_user')
+    wor_forecast_user = script.GetPropertyTemplate('_unknown_Water Oil Ratio (WOR Forecast)__realization_user')
+    cross_2 = script.GetPropertyTemplateCrossedWithSource(oil_production_total_wor, wor_forecast_user, 'Curve')
 
-    coloring_id_1 = macro_context.GetColoringId(u'CrossPlotCurveCollectionColoringProcessSubject', data_id=data_id_1,
+    coloring_id_1 = macro_context.GetColoringId('CrossPlotCurveCollectionColoringProcessSubject', data_id=data_id_1,
                                                 window_id=cpw_2)
     script.ChangeAttrs(expected_class_name='CrossPlotCurveCollectionColoringProcessSubject',
-                       attrs={u'crossed_curve_associations': [cross_1, cross_2]}, object_id=coloring_id_1)
+                       attrs={'crossed_curve_associations': [cross_1, cross_2]}, object_id=coloring_id_1)
 
     script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject',
-                       attrs={'axis_allocation_rule': u'axis_allocation_by_quantity'}, object_id=cpw_2)
-    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'coloring_strategy_id': u'Property Based'},
+                       attrs={'axis_allocation_rule': 'axis_allocation_by_quantity'}, object_id=cpw_2)
+    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'coloring_strategy_id': 'Property Based'},
                        object_id=cpw_2)
     script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'enable_title': True}, object_id=cpw_2)
-    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'title': u'$e'}, object_id=cpw_2)
+    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'title': '$e'}, object_id=cpw_2)
 
-    object_id_4 = cpw_2 + u'.plot_window_axis_subject_0'
+    object_id_4 = cpw_2 + '.plot_window_axis_subject_0'
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'use_local_title': True},
                        object_id=object_id_4)
-    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': u'Water Oil Ratio'},
+    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': 'Water Oil Ratio'},
                        object_id=object_id_4)
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'axis_scale_logarithmic': True},
                        object_id=object_id_4)
 
-    object_id_5 = cpw_2 + u'.plot_window_axis_subject_8'
+    object_id_5 = cpw_2 + '.plot_window_axis_subject_8'
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'use_local_title': True},
                        object_id=object_id_5)
-    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': u'Oil Production Total ($unit)'},
+    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': 'Oil Production Total ($unit)'},
                        object_id=object_id_5)
 
     for prod_well in open_producers:
         script.ChangeApplicationSettings(
-            setting_name=u'CURVE_PROPS_input_reader_00001.' + prod_well.GetName() + '.realization#^user#^unknown_data#^Oil Production Total (History):^:realization#^custom#^unknown_data#^WOR:^:Curve',
-            value={u'pen_color': (34, 139, 34), u'symbol_color': (184, 134, 11), u'symbol_style': -1,
-                   u'symbol_size': 10, u'curve_style': 1, u'pen_width': 3, u'pen_style': 1})
+            setting_name='CURVE_PROPS_input_reader_00001.' + prod_well.GetName() + '.realization#^user#^unknown_data#^Oil Production Total (History):^:realization#^custom#^unknown_data#^WOR:^:Curve',
+            value={'pen_color': (34, 139, 34), 'symbol_color': (184, 134, 11), 'symbol_style': -1,
+                   'symbol_size': 10, 'curve_style': 1, 'pen_width': 3, 'pen_style': 1})
 
     # Create Cross plot #3
     cpw_3 = script.CreateCrossPlotWindow()
     app.GetWindow().SetName('Water Cut Forecast')
-    data_id_2 = macro_context.GetDataId(u'WellSelectorProcessSubject', name=well_name, study_id=study_id_0)
+    data_id_2 = macro_context.GetDataId('WellSelectorProcessSubject', name=well_name, study_id=study_id_0)
 
     water_cut_sc = script.GetPropertyTemplate('WATER_CUT_SC__realization_user')
-    cross_3 = script.GetPropertyTemplateCrossedWithSource(oil_production_total__splitted, water_cut_sc, u'Curve')
+    cross_3 = script.GetPropertyTemplateCrossedWithSource(oil_production_total__splitted, water_cut_sc, 'Curve')
 
     oil_production_total_wc = script.GetPropertyTemplate(
-        u'_unknown_Oil Production Total (WC Forecast)__realization_user')
-    wc_forecast_user = script.GetPropertyTemplate(u'_unknown_Water Cut (WC Forecast)__realization_user')
-    cross_4 = script.GetPropertyTemplateCrossedWithSource(oil_production_total_wc, wc_forecast_user, u'Curve')
+        '_unknown_Oil Production Total (WC Forecast)__realization_user')
+    wc_forecast_user = script.GetPropertyTemplate('_unknown_Water Cut (WC Forecast)__realization_user')
+    cross_4 = script.GetPropertyTemplateCrossedWithSource(oil_production_total_wc, wc_forecast_user, 'Curve')
 
-    coloring_id_2 = macro_context.GetColoringId(u'CrossPlotCurveCollectionColoringProcessSubject', data_id=data_id_2,
+    coloring_id_2 = macro_context.GetColoringId('CrossPlotCurveCollectionColoringProcessSubject', data_id=data_id_2,
                                                 window_id=cpw_3)
     script.ChangeAttrs(expected_class_name='CrossPlotCurveCollectionColoringProcessSubject',
-                       attrs={u'crossed_curve_associations': [cross_3, cross_4]}, object_id=coloring_id_2)
+                       attrs={'crossed_curve_associations': [cross_3, cross_4]}, object_id=coloring_id_2)
 
     script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject',
-                       attrs={'axis_allocation_rule': u'axis_allocation_by_quantity'}, object_id=cpw_3)
-    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'coloring_strategy_id': u'Property Based'},
+                       attrs={'axis_allocation_rule': 'axis_allocation_by_quantity'}, object_id=cpw_3)
+    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'coloring_strategy_id': 'Property Based'},
                        object_id=cpw_3)
     script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'enable_title': True}, object_id=cpw_3)
-    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'title': u'$e'}, object_id=cpw_3)
+    script.ChangeAttrs(expected_class_name='CrossPlotWindowSubject', attrs={'title': '$e'}, object_id=cpw_3)
 
-    object_id_7 = cpw_3 + u'.plot_window_axis_subject_0'
+    object_id_7 = cpw_3 + '.plot_window_axis_subject_0'
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'use_local_title': True},
                        object_id=object_id_7)
-    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': u'Water Cut'},
+    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': 'Water Cut'},
                        object_id=object_id_7)
 
-    object_id_8 = cpw_3 + u'.plot_window_axis_subject_8'
+    object_id_8 = cpw_3 + '.plot_window_axis_subject_8'
     script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'use_local_title': True},
                        object_id=object_id_8)
-    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': u'Oil Production Total ($unit)'},
+    script.ChangeAttrs(expected_class_name='PlotWindowAxisSubject', attrs={'title': 'Oil Production Total ($unit)'},
                        object_id=object_id_8)
 
 

@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
 Spyder Editor
 
 Este é um arquivo de script temporário.
 """
 import numpy as np
-import mbal_functions as mbalf
+from . import mbal_functions as mbalf
 
 #Material Balance
 ts =  np.array([30, 60, 90, 120])
@@ -25,7 +24,7 @@ cw = 0.0000467
 cf = 0.0000484
 Swi = 0.15
 m = 0.33
-P = 100 
+P = 100
 Pi = 5000
 Bo = 1.1
 

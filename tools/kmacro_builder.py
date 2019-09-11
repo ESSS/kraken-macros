@@ -31,7 +31,7 @@ def main(args):
         exit(1)
     copy_macro_files(macro_filename)
     _, macro_basename = os.path.split(macro_filename)
-    print("{} and dependencies copied to Scripts folder".format(macro_basename))
+    print(f"{macro_basename} and dependencies copied to Scripts folder")
 
 
 if __name__ == '__main__':
