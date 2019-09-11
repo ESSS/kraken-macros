@@ -24,7 +24,7 @@ cw = 0.0000467
 cf = 0.0000484
 Swi = 0.15
 m = 0.33
-P = 100 
+P = 100
 Pi = 5000
 Bo = 1.1
 
@@ -35,18 +35,18 @@ F, produced_oil, produced_water, injected_gas, injected_water = mbalf.production
 dP = mbalf.deltaP(Pi, Pavg)
 Efw = mbalf.pore_volume_reduction_connate_water_expansion(m, Boi, cw, Swi, cf, deltaP)
 
-print(("Eg =", Eg))
-print(("Eo =", Eo))
-print(("F = ", F))
+print("Eg =", Eg)
+print("Eo =", Eo)
+print("F = ", F)
 
-print(("Efw =", Efw))
+print("Efw =", Efw)
 
 
 #Linearized equation
 
 N = mbalf.oil_in_place(F, Eo, m, Eg, Efw, We)
 
-print(("N =", N))
+print("N =", N)
 
 
 
