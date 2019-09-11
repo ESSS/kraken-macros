@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Thu Jul 13 10:24:55 2017
 
@@ -13,8 +12,8 @@ def pvt_datalist():
             ('B<sub>o</sub>', 1.3),
             ('B<sub>g</sub>', 0.0001),
             ('B<sub>w</sub>', 1.008),
-            ('B<sub>winj<\sub>', 1.008),
-            ('B<sub>ginj<\sub>', 0.0001),
+            (r'B<sub>winj<\sub>', 1.008),
+            (r'B<sub>ginj<\sub>', 0.0001),
             ('R<sub>si</sub>', 120.0),
             ('R<sub>sb</sub>', 110.0),
             ('P<sub>i</sub> (psi)', 4000.0),
@@ -26,12 +25,12 @@ def drive_mechanisms_datalist():
             ('m', 0.33),
             (None, None),
             ('Water Influx', True),
-            ('W<sub>e<\sub> (bbl)', 0.0),
+            (r'W<sub>e<\sub> (bbl)', 0.0),
             (None, None),
             ('Pore Volume reduction and Connate Water expansion', True),
-            ('c<sub>w<\sub> (psi<sup>-1</sup>)', 0.0000467),
-            ('c<sub>f<\sub> (psi<sup>-1</sup>)', 0.0000484),
-            ('S<sub>wi<\sub>',0.15),
+            (r'c<sub>w<\sub> (psi<sup>-1</sup>)', 0.0000467),
+            (r'c<sub>f<\sub> (psi<sup>-1</sup>)', 0.0000484),
+            (r'S<sub>wi<\sub>',0.15),
             ]
             
 def show_mbal_dialog():

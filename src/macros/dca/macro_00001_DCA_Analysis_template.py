@@ -188,7 +188,7 @@ def run():
     properties = []
 
     for curve in all_curve_names:
-        log.Info("Cross plot for '{}'".format(curve))
+        log.Info(f"Cross plot for '{curve}'")
         oil_production_total_forecast = script.GetPropertyTemplate(
             str('_unknown_' + curve[1] + '__realization_user'))
         oil_production_rate_forecast = script.GetPropertyTemplate(

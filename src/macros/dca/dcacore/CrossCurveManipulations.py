@@ -12,7 +12,7 @@ from petroapp10.plugins.entities._entities import GetSubjects
 from plugins10core.pluginmanager import PluginManager
 from petroapp10.plugins.colorings_control.colorings_control_plugins import EPColoringControl
 
-class CrossApiUtils(object):
+class CrossApiUtils:
 
 
     def ClearCrossedCurvesFromModel(self, model):
